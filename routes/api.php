@@ -14,6 +14,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group([ "middleware" => "guest:api", "prefix" => "auth", "namespace" => "Auth" ], function () {
+    Route::put("", "AuthenticateController@login");
+});
+Route::group([ "middleware" => "auth:api", "prefix" => "auth", "namespace" => "Auth" ], function () {
+   Route::put("logout", "AuthenticateController@logout");
+   Route::get("check", function () { return response()->json("OK", 200); });
 });
