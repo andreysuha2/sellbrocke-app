@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Modes\User;
+use App\Http\Resources\User as UserResource;
 
 class AuthenticateController extends Controller
 {
@@ -16,7 +17,7 @@ class AuthenticateController extends Controller
         if(Hash::check($request->password, $user->password)) {
             $token = $user->createToken('Laravel Password Grant Client')->accessToken;
             Auth::login($user);
-            return response()->json(["user" => $user, "token" => $token], 200);
+            return (new UserResource($user))->additional([ "token" => $token ]);
         } else return response()->json([ "msg" => "Invalid credentials" ], 422);
     }
 
