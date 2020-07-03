@@ -16,8 +16,9 @@ class CreateMerchantsTable extends Migration
         Schema::create('merchants', function (Blueprint $table) {
             $table->id();
             $table->string("name");
-            $table->string("url");
-            $table->bigInteger("oauth_client_id");
+            $table->string("login")->unique();
+            $table->string("password");
+            $table->softDeletes();
             $table->timestamps();
         });
     }
