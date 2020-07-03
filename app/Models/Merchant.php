@@ -15,4 +15,8 @@ class Merchant extends Authenticatable
     protected $fillable = [ "name", "login", "password" ];
 
     protected $hidden = [ "password" ];
+
+    public function findForPassport($merchantLogin) {
+        return $this->where('login', $merchantLogin)->first();
+    }
 }
