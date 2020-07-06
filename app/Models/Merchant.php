@@ -19,4 +19,8 @@ class Merchant extends Authenticatable
     public function findForPassport($merchantLogin) {
         return $this->where('login', $merchantLogin)->first();
     }
+
+    public function customers() {
+        return $this->hasMany("App\Models\Customer", "merchant_id", "id");
+    }
 }
