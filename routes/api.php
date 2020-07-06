@@ -13,17 +13,22 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group([ "middleware" => "guest:api", "prefix" => "auth", "namespace" => "Auth" ], function () {
-    Route::put("", "AuthenticateController@login");
-});
-
-Route::group([ "middleware" => "auth:api" ], function () {
-    Route::group([ "prefix" => "auth", "namespace" => "Auth" ], function () {
-        Route::put("logout", "AuthenticateController@logout");
-        Route::get("check", function () { return response()->json("User OK", 200); });
+Route::group([ "prefix" => "admin" ], function () {
+    Route::group([ "middleware" => "guest:api", "prefix" => "auth", "namespace" => "Auth" ], function () {
+        Route::put("", "AuthenticateController@login");
     });
-    Route::group([ "prefix" => "user" ], function () {
-        Route::get("", "UserController@index");
+
+    Route::group([ "middleware" => "auth:api" ], function () {
+        Route::group([ "prefix" => "auth", "namespace" => "Auth" ], function () {
+            Route::put("logout", "AuthenticateController@logout");
+            Route::get("check", function () { return response()->json("User OK", 200); });
+        });
+        Route::group([ "prefix" => "user" ], function () {
+            Route::get("", "UserController@index");
+        });
+        Route::group([ "prefix" => "merchants", "namespace" => "Merchants\Admin" ], function () {
+            Route::get("/", "MerchantController@index");
+        });
     });
 });
 

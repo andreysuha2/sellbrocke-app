@@ -28,6 +28,7 @@ class Merchant extends JsonResource
             "id" => $this->id,
             "name" => $this->name,
             "login" => $this->when(!$this->forPlugin, $this->login),
+            "url" => $this->when(!$this->forPlugin, $this->url),
             "createdAt" => $this->when(!$this->forPlugin, $this->created_at),
             "updatedAt" => $this->when(!$this->forPlugin, $this->updated_at),
             "deletedAt" => $this->when(!$this->forPlugin, $this->deleted_at)

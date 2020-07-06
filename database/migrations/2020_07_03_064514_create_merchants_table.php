@@ -18,6 +18,7 @@ class CreateMerchantsTable extends Migration
             $table->string("name");
             $table->string("login")->unique();
             $table->string("password");
+            $table->string("url");
             $table->softDeletes();
             $table->timestamps();
         });
