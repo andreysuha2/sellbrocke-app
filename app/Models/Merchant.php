@@ -23,4 +23,8 @@ class Merchant extends Authenticatable
     public function customers() {
         return $this->hasMany("App\Models\Customer", "merchant_id", "id");
     }
+
+    public function getCustomerByMerchantId($id) {
+        return $this->customers()->where("merchant_customer_id", $id);
+    }
 }
