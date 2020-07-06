@@ -27,6 +27,6 @@ Route::group([ "middleware" => "auth:api" ], function () {
     });
 });
 
-Route::group([ "middleware" => "auth:api-merchants", 'prefix' => 'merchants'], function () {
+Route::group([ "middleware" => "auth:api-merchants", 'prefix' => 'merchants', 'namespace' => "Merchants"], function () {
     Route::get("/", "MerchantController@index");
 });
