@@ -45,6 +45,11 @@ return [
             'driver' => 'passport',
             'provider' => 'users'
         ],
+
+        'api-merchants' => [
+            'driver' => 'passport',
+            'provider' => 'merchants'
+        ]
     ],
 
     /*
@@ -70,10 +75,10 @@ return [
             'model' => \App\Modes\User::class,
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'merchants' => [
+            'driver' => 'eloquent',
+            'model' => \App\Models\Merchant::class
+        ]
     ],
 
     /*
