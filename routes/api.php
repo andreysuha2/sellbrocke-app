@@ -34,4 +34,8 @@ Route::group([ "prefix" => "admin" ], function () {
 
 Route::group([ "middleware" => "auth:api-merchants", 'prefix' => 'merchants', 'namespace' => "Merchants"], function () {
     Route::get("/", "MerchantController@index");
+    Route::group([ "prefix" => "customer" ], function () {
+        Route::post("", "CustomerController@store");
+        Route::delete("", "CustomerController@delete");
+    });
 });
