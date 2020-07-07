@@ -10,7 +10,7 @@ class CustomerController extends Controller
 {
     public function store(Request $request) {
         $merchant = Auth::guard("api-merchants")->user();
-        $customer = $merchant->getCustomerByMerchantId($request->merchant_customer_id)->first();
+        $customer = $merchant->getCustomerByMCId($request->merchant_customer_id)->first();
         $data = $request->toArray();
         if(!$customer) {
             $customer = $merchant->customers()->create($data);
@@ -22,7 +22,7 @@ class CustomerController extends Controller
 
     public function delete(Request $request) {
         $merchant = Auth::guard("api-merchants")->user();
-        $customer = $merchant->getCustomerByMerchantId($request->id)->firstOrFail();
+        $customer = $merchant->getCustomerByMCId($request->id)->firstOrFail();
         $customer->delete();
     }
 }

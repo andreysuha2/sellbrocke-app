@@ -24,7 +24,10 @@ class Merchant extends Authenticatable
         return $this->hasMany("App\Models\Customer", "merchant_id", "id");
     }
 
-    public function getCustomerByMerchantId($id) {
-        return $this->customers()->where("merchant_customer_id", $id);
+    /*
+     * @param integer $merchantCustomerId id customer from WP
+     */
+    public function getCustomerByMCId($merchantCustomerId) {
+        return $this->customers()->where("merchant_customer_id", $merchantCustomerId);
     }
 }
