@@ -33,6 +33,7 @@ class CompaniesController extends Controller
     }
 
     public function deleteCompany(Company $company) {
+        // TODO: check relation with devices
         $company->delete();
         return new CompanyResource($company);
     }

@@ -29,6 +29,18 @@ Route::group([ "prefix" => "admin" ], function () {
         Route::group([ "prefix" => "merchants", "namespace" => "Merchants\Admin" ], function () {
             Route::get("/", "MerchantController@index");
         });
+        Route::group([ "prefix" => "companies" ], function () {
+            Route::get("", "CompaniesController@getAll");
+            Route::get("is-free-slug/{slug}", "CompaniesController@checkFreeSlug");
+            Route::group([ "prefix" => "company" ], function () {
+                Route::post("", "CompaniesController@createCompany");
+                Route::group([ "prefix" => "{company}" ], function () {
+                    Route::get("", "CompanyController@getCompany");
+                    Route::put("", "CompanyController@updateCompany");
+                    Route::delete("", "CompanyController@deleteCompany");
+                });
+            });
+        });
     });
 });
 
