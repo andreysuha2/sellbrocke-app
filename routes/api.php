@@ -35,9 +35,9 @@ Route::group([ "prefix" => "admin" ], function () {
             Route::group([ "prefix" => "company" ], function () {
                 Route::post("", "CompaniesController@createCompany");
                 Route::group([ "prefix" => "{company}" ], function () {
-                    Route::get("", "CompanyController@getCompany");
-                    Route::put("", "CompanyController@updateCompany");
-                    Route::delete("", "CompanyController@deleteCompany");
+                    Route::get("", "CompaniesController@getCompany");
+                    Route::put("", "CompaniesController@updateCompany");
+                    Route::delete("", "CompaniesController@deleteCompany");
                 });
             });
         });
