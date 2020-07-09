@@ -6,22 +6,25 @@ use App\Models\Company;
 use Illuminate\Http\Request;
 use App\Http\Resources\CompaniesCollection;
 use App\Http\Resources\Company as CompanyResource;
+use App\Http\Requests\Company\StoreCompany as StoreCompanyRequest;
 
 class CompaniesController extends Controller
 {
     public function getAll() {
-        $companies = Company::paginate(20);
-        return (new CompaniesCollection($companies))->response()->getData(true);
+        $companies = Company::all();
+        return new CompaniesCollection($companies);
     }
 
     public function getCompany(Company $company) {
         return new CompanyResource($company);
     }
 
-    public function createCompany(Request $request) {
+    public function createCompany(StoreCompanyRequest $request) {
         $data = $request->toArray();
-        // TODO: validate $data
         $company = Company::create($data);
+        if($request->hasFile("logo")) {
+            $company->attach($request->file("logo"), [ "key" => "logo" ]);
+        }
         return new CompanyResource($company);
     }
 

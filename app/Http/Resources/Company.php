@@ -16,10 +16,14 @@ class Company extends JsonResource
 
     public function toArray($request)
     {
+        $logoRecord = $this->attachment("logo");
+        $logoPath = $logoRecord ? $logoRecord->url : null;
         return [
             "id" => $this->id,
             "name" => $this->name,
-            "slug" => $this->slug
+            "slug" => $this->slug,
+            "priceReduction" => (float) $this->price_reduction,
+            "logo" => $logoPath
         ];
     }
 }
