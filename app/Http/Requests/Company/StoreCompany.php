@@ -24,10 +24,10 @@ class StoreCompany extends FormRequest
     public function rules()
     {
         return [
-            "name" => "sometimes|required",
-            "price_reduction" => "sometimes|required|numeric|between:0,100.00",
-            "slug" => "sometimes|required|unique:companies",
-            "logo" => "sometimes|required|image|max:100"
+            "name" => "required",
+            "price_reduction" => "required|numeric|between:0,100.00",
+            "slug" => "required|unique:companies",
+            "logo" => "required|image|max:100"
         ];
     }
 }
