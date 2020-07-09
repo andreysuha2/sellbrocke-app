@@ -13,12 +13,12 @@ class AuthenticateController extends Controller
 {
     public function login(Request $request) {
         $user = User::where("email", $request->email)->first();
-        if(!$user) return response()->json([ "msg" => "Invalid credentials" ], 422);
+        if(!$user) return response()->json([ "message" => "Invalid credentials" ], 422);
         if(Hash::check($request->password, $user->password)) {
             $token = $user->createToken("Admin client $user->name")->accessToken;
             Auth::login($user);
             return (new UserResource($user))->additional([ "token" => $token ]);
-        } else return response()->json([ "msg" => "Invalid credentials" ], 422);
+        } else return response()->json([ "message" => "Invalid credentials" ], 422);
     }
 
     public function logout(Request $request) {
