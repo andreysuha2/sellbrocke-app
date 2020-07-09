@@ -30,7 +30,7 @@ Route::group([ "prefix" => "admin" ], function () {
             Route::get("/", "MerchantController@index");
         });
         Route::group([ "prefix" => "companies" ], function () {
-            Route::get("", "CompaniesController@getAll");
+            Route::get("", "CompaniesController@getCompanies");
             Route::get("is-free-slug/{slug}", "CompaniesController@checkFreeSlug");
             Route::group([ "prefix" => "company" ], function () {
                 Route::post("", "CompaniesController@createCompany");

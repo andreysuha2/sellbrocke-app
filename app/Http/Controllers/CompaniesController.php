@@ -10,7 +10,7 @@ use App\Http\Requests\Company\UpdateCompany as UpdateCompanyRequest;
 
 class CompaniesController extends Controller
 {
-    public function getAll() {
+    public function getCompanies() {
         $companies = Company::all();
         return new CompaniesCollection($companies);
     }
