@@ -46,9 +46,9 @@ Route::group([ "prefix" => "admin" ], function () {
             Route::group([ "prefix" => "defect" ], function () {
                 Route::post("", "DefectsController@createDefect");
                 Route::group([ "prefix" => "{defect}" ], function () {
-                    Route::get("", "DefectController@getDefect");
-                    Route::put("", "DefectController@updateDefect");
-                    Route::delete("", "DefectController@deleteDefect");
+                    Route::get("", "DefectsController@getDefect");
+                    Route::put("", "DefectsController@updateDefect");
+                    Route::delete("", "DefectsController@deleteDefect");
                 });
             });
         });
