@@ -30,7 +30,7 @@ Route::group([ "prefix" => "admin" ], function () {
             Route::get("/", "MerchantController@index");
         });
         Route::group([ "prefix" => "companies" ], function () {
-            Route::get("", "CompaniesController@getAll");
+            Route::get("", "CompaniesController@getCompanies");
             Route::get("is-free-slug/{slug}", "CompaniesController@checkFreeSlug");
             Route::group([ "prefix" => "company" ], function () {
                 Route::post("", "CompaniesController@createCompany");
@@ -38,6 +38,17 @@ Route::group([ "prefix" => "admin" ], function () {
                     Route::get("", "CompaniesController@getCompany");
                     Route::put("", "CompaniesController@updateCompany");
                     Route::delete("", "CompaniesController@deleteCompany");
+                });
+            });
+        });
+        Route::group([ "prefix" => "defects" ], function () {
+            Route::get("", "DefectsController@getDefects");
+            Route::group([ "prefix" => "defect" ], function () {
+                Route::post("", "DefectsController@createDefect");
+                Route::group([ "prefix" => "{defect}" ], function () {
+                    Route::get("", "DefectsController@getDefect");
+                    Route::put("", "DefectsController@updateDefect");
+                    Route::delete("", "DefectsController@deleteDefect");
                 });
             });
         });
