@@ -10,4 +10,8 @@ class Defect extends Model
     protected $table = "defects";
 
     protected $fillable = [ "name", "description", "price_reduction" ];
+
+    public function categories() {
+        $this->belongsToMany("App\Models\Category", "category_defect", "defect_id", "category_id");
+    }
 }

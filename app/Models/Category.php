@@ -14,4 +14,8 @@ class Category extends Model
     protected $table = "categories";
 
     protected $fillable = [ "name", "slug", "description" ];
+
+    public function defects() {
+        return $this->belongsToMany("App\Models\Defect", "category_defect", "category_id", "defect_id");
+    }
 }
