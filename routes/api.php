@@ -52,6 +52,9 @@ Route::group([ "prefix" => "admin" ], function () {
                 });
             });
         });
+        Route::group([ "prefix" => "categories" ], function () {
+            Route::get("", "CategoriesController@getRootCategories");
+        });
     });
 });
 
