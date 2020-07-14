@@ -17,6 +17,13 @@ class CategoriesController extends Controller
 
     public function createCategory(CreateCategoryRequest $request, $parentId = null) {
         $category = Category::create($request->toArray());
+        $this->uploadThumbnail($request, $category);
         return new CategoryResource($category);
+    }
+
+    private function uploadThumbnail($request, Category $category) {
+        if($request->hasFile("thumbnail")) {
+            $category->attach($request->file("thumbnail"), [ "key" => "thumbnail" ]);
+        }
     }
 }

@@ -17,11 +17,10 @@ class CreateCategoriesTable extends Migration
             $table->id();
             $table->string("name");
             $table->text("description")->nullable();
-            $table->string("slug");
+            $table->string("slug")->unique();
             $table->nestedSet();
             $table->softDeletes();
             $table->timestamps();
-            $table->unique([ "parent_id", "slug" ], "unique_slug");
         });
     }
 

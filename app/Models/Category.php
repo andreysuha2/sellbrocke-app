@@ -18,4 +18,8 @@ class Category extends Model
     public function defects() {
         return $this->belongsToMany("App\Models\Defect", "category_defect", "category_id", "defect_id");
     }
+
+    public function setParentAttribute($value) {
+        $this->setParentIdAttribute($value);
+    }
 }

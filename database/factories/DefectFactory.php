@@ -9,6 +9,6 @@ $factory->define(Defect::class, function (Faker $faker) {
     return [
         "name" => $faker->word(),
         "price_reduction" => $faker->randomFloat(2, 1, 99.99),
-        "description" => $faker->text(200)
+        "description" => $faker->text(200),
     ];
 });

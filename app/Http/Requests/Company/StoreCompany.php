@@ -26,7 +26,7 @@ class StoreCompany extends FormRequest
         return [
             "name" => "required",
             "price_reduction" => "required|numeric|between:0,100.00",
-            "slug" => "required|unique:companies",
+            "slug" => "required|unique:companies|alpha_dash",
             "logo" => "required|image|max:100"
         ];
     }
