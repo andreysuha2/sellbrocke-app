@@ -12,6 +12,8 @@ class Category extends JsonResource
      * @param  \Illuminate\Http\Request  $request
      * @return array
      */
+    public static $wrap = "category";
+
     public function toArray($request)
     {
         $thumbnail = $this->attachment("thumbnail");

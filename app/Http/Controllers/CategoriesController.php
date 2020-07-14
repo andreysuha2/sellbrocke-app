@@ -6,6 +6,7 @@ use App\Http\Resources\CategoriesCollection;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Requests\Category\CreateCategory as CreateCategoryRequest;
+use App\Http\Resources\Category as CategoryResource;
 
 class CategoriesController extends Controller
 {
@@ -15,6 +16,7 @@ class CategoriesController extends Controller
     }
 
     public function createCategory(CreateCategoryRequest $request, $parentId = null) {
-        return response()->json([ "req" => $request->toArray(), "parent_id" => $parentId ]);
+        $category = Category::create($request->toArray());
+        return new CategoryResource($category);
     }
 }

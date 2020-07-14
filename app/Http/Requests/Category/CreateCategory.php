@@ -23,8 +23,10 @@ class CreateCategory extends FormRequest
      */
     public function rules()
     {
+        $parentId = $this->route("category") || null;
         return [
-            //
+            "name" => "required",
+            "slug" => "required|unique:categories,slug,NULL,NULL,parent_id,$parentId"
         ];
     }
 }
