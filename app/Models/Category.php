@@ -15,6 +15,8 @@ class Category extends Model
 
     protected $fillable = [ "name", "slug", "description" ];
 
+    protected $hidden = [ "pivot" ];
+
     public function defects() {
         return $this->belongsToMany("App\Models\Defect", "category_defect", "category_id", "defect_id");
     }

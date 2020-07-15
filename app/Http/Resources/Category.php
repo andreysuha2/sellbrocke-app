@@ -22,7 +22,8 @@ class Category extends JsonResource
             "name" => $this->name,
             "thumbnail" => $thumbnail ? $thumbnail->url : null,
             "description" => $this->description,
-            "slug" => $this->slug
+            "slug" => $this->slug,
+            "defects" => $this->defects()->select("defects.id", "defects.name")->get()
         ];
     }
 }

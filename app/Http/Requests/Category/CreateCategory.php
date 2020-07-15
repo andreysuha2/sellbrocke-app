@@ -21,12 +21,22 @@ class CreateCategory extends FormRequest
      *
      * @return array
      */
+
     public function rules()
     {
         return [
             "name" => "required",
             "slug" => "required|unique:categories|alpha_dash",
-            "thumbnail" => "required|image|max:100"
+            "thumbnail" => "required|image|max:100",
+            "defects" => "present|array",
+            "defects.*" => "numeric|exists:defects,id"
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            "defects" => json_decode($this->defects)
+        ]);
     }
 }
