@@ -18,10 +18,23 @@ class CategoriesController extends Controller
     }
 
     public function createCategory(CreateCategoryRequest $request, $parentId = null) {
-        $category = Category::create($request->toArray());
+        if($parentId) {
+            $parent = Category::findOrFail($parentId);
+            $category = $parent->children()->create($request->toArray());
+        } else $category = Category::create($request->toArray());
         $category->defects()->attach($request->defects);
         $this->uploadThumbnail($request, $category);
         return new CategoryResource($category);
+    }
+
+    public function getCategory(Category $category, Request $request) {
+        $path = $category->ancestors()->select("id", "name")->get();
+        $defects = $request->withDefects ? Defect::getList() : null;
+        return response()->json([
+            "category" => new CategoryResource($category, true),
+            "path" => $path,
+            "defects" => $defects
+        ]);
     }
 
     private function uploadThumbnail($request, Category $category) {

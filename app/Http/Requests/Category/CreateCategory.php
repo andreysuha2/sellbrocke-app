@@ -26,7 +26,7 @@ class CreateCategory extends FormRequest
     {
         return [
             "name" => "required",
-            "slug" => "required|unique:categories|alpha_dash",
+            "slug" => "required|unique:categories",
             "thumbnail" => "required|image|max:100",
             "defects" => "present|array",
             "defects.*" => "numeric|exists:defects,id"
