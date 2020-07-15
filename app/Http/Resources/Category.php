@@ -28,6 +28,9 @@ class Category extends JsonResource
     public function toArray($request)
     {
         $thumbnail = $this->attachment("thumbnail");
+        if($this->withChildren) {
+            $children = new CategoriesCollection($this->children()->get(), $this->allChildren);
+        } else $children = null;
 
         return [
             "id" => $this->id,
@@ -36,7 +39,7 @@ class Category extends JsonResource
             "description" => $this->description,
             "slug" => $this->slug,
             "defects" => $this->defects()->select("defects.id", "defects.name")->get(),
-            "children" => new CategoriesCollection($this->children()->get())
+            "children" => $this->when($this->withChildren, $children)
         ];
     }
 }

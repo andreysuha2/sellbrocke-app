@@ -29,6 +29,7 @@ class CategoriesController extends Controller
 
     public function getCategory(Category $category, Request $request) {
         $path = $category->ancestors()->select("id", "name")->get();
+        $path->push([ "id" => $category->id, "name" => $category->name ]);
         $defects = $request->withDefects ? Defect::getList() : null;
         return response()->json([
             "category" => new CategoryResource($category, true),

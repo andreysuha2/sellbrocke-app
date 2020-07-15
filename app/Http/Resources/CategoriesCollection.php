@@ -7,6 +7,7 @@ use App\Http\Resources\Category as CategoryResource;
 
 class CategoriesCollection extends ResourceCollection
 {
+    private $withChildren;
     /**
      * Transform the resource collection into an array.
      *
@@ -15,10 +16,16 @@ class CategoriesCollection extends ResourceCollection
      */
     public static $wrap = "categories";
 
+    public function __construct($resource, $withChildren = false)
+    {
+        parent::__construct($resource);
+        $this->withChildren = $withChildren;
+    }
+
     public function toArray($request)
     {
         return $this->collection->map(function ($category) {
-            return new CategoryResource($category);
+            return new CategoryResource($category, $this->withChildren, $this->withChildren);
         });
     }
 }
