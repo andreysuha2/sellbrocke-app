@@ -17,6 +17,7 @@ class CreateCategoryDefectTable extends Migration
             $table->id();
             $table->bigInteger("category_id");
             $table->bigInteger("defect_id");
+            $table->unique([ "category_id", "defect_id" ], "unique_bundle");
         });
     }
 

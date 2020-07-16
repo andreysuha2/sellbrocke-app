@@ -45,6 +45,8 @@ class CategoriesController extends Controller
             $this->updateDescendantsSlug($category, $request->slug);
         }
         $category->update($request->toArray());
+        if($request->has("attach_defects")) $category->defects()->attach($request->attach_defects);
+        if($request->has("detach_defects")) $category->defects()->detach($request->detach_defects);
         $this->uploadThumbnail($request, $category);
         return new CategoryResource($category);
     }
