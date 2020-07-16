@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Company;
+namespace App\Http\Requests\Category;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreCompany extends FormRequest
+class CreateCategory extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,13 +21,22 @@ class StoreCompany extends FormRequest
      *
      * @return array
      */
+
     public function rules()
     {
         return [
             "name" => "required",
-            "price_reduction" => "required|numeric|between:0,100.00",
-            "slug" => "required|unique:companies|alpha_dash",
-            "logo" => "required|image|max:100"
+            "slug" => "required|unique:categories",
+            "thumbnail" => "required|image|max:100",
+            "defects" => "present|array",
+            "defects.*" => "numeric|exists:defects,id"
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            "defects" => json_decode($this->defects)
+        ]);
     }
 }

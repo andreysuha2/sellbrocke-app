@@ -26,7 +26,7 @@ class UpdateCompany extends FormRequest
         return [
             "name" => "sometimes|required",
             "price_reduction" => "sometimes|required|numeric|between:0,100.00",
-            "slug" => "sometimes|required|unique:companies",
+            "slug" => "sometimes|required|unique:companies|alpha_dash",
             "logo" => "sometimes|required|image|max:100"
         ];
     }

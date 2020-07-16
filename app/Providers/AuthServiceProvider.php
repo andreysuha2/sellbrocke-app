@@ -26,5 +26,10 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
         Passport::routes();
+
+        Gate::define("delete-category", function ($user, $category) {
+            // TODO check related devices
+            return !$category->descendants()->exists();
+        });
     }
 }

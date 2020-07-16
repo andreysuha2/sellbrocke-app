@@ -52,6 +52,17 @@ Route::group([ "prefix" => "admin" ], function () {
                 });
             });
         });
+        Route::group([ "prefix" => "categories" ], function () {
+            Route::get("", "CategoriesController@getRootCategories");
+            Route::group([ "prefix" => "category" ], function () {
+                Route::post("{category?}", "CategoriesController@createCategory");
+                Route::group([ "prefix" => "{category}" ], function () {
+                    Route::get("", "CategoriesController@getCategory");
+                    Route::put("", "CategoriesController@updateCategory");
+                    Route::delete("", "CategoriesController@deleteCategory");
+                });
+            });
+        });
     });
 });
 
