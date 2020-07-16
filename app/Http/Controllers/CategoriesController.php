@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Gate;
 use App\Http\Resources\CategoriesCollection;
 use App\Models\Defect;
 use App\Models\Category;
@@ -48,6 +49,12 @@ class CategoriesController extends Controller
         if($request->has("attach_defects")) $category->defects()->attach($request->attach_defects);
         if($request->has("detach_defects")) $category->defects()->detach($request->detach_defects);
         $this->uploadThumbnail($request, $category);
+        return new CategoryResource($category);
+    }
+
+    public function deleteCategory(Category $category) {
+        Gate::authorize("delete-category", $category);
+        $category->forceDelete();
         return new CategoryResource($category);
     }
 

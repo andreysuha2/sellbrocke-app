@@ -59,6 +59,7 @@ Route::group([ "prefix" => "admin" ], function () {
                 Route::group([ "prefix" => "{category}" ], function () {
                     Route::get("", "CategoriesController@getCategory");
                     Route::put("", "CategoriesController@updateCategory");
+                    Route::delete("", "CategoriesController@deleteCategory");
                 });
             });
         });
