@@ -58,6 +58,7 @@ Route::group([ "prefix" => "admin" ], function () {
                 Route::post("{category?}", "CategoriesController@createCategory");
                 Route::group([ "prefix" => "{category}" ], function () {
                     Route::get("", "CategoriesController@getCategory");
+                    Route::put("", "CategoriesController@updateCategory");
                 });
             });
         });

@@ -29,7 +29,7 @@ class Category extends JsonResource
     {
         $thumbnail = $this->attachment("thumbnail");
         if($this->withChildren) {
-            $children = new CategoriesCollection($this->children()->get(), $this->allChildren);
+            $children = new CategoriesCollection($this->children()->orderBy("created_at", "desc")->get(), $this->allChildren);
         } else $children = null;
 
         return [
@@ -39,6 +39,7 @@ class Category extends JsonResource
             "description" => $this->description,
             "slug" => $this->slug,
             "defects" => $this->defects()->select("defects.id", "defects.name")->get(),
+            "descendantsCount" => $this->descendants()->count(),
             "children" => $this->when($this->withChildren, $children)
         ];
     }

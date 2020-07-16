@@ -7,12 +7,14 @@ use App\Models\Defect;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Requests\Category\CreateCategory as CreateCategoryRequest;
+use App\Http\Requests\Category\UpdateCategory as UpdateCategoryRequest;
 use App\Http\Resources\Category as CategoryResource;
+use Illuminate\Support\Str;
 
 class CategoriesController extends Controller
 {
     public function getRootCategories() {
-        $categories = Category::where("parent_id", null)->get();
+        $categories = Category::where("parent_id", null)->orderBy("created_at", "desc")->get();
         $defectsList = Defect::getList();
         return response()->json([ "categories" => new CategoriesCollection($categories), "defects" => $defectsList ]);
     }
@@ -38,9 +40,27 @@ class CategoriesController extends Controller
         ]);
     }
 
+    public function updateCategory(Category $category, UpdateCategoryRequest $request) {
+        if($request->has("slug")) {
+            $this->updateDescendantsSlug($category, $request->slug);
+        }
+        $category->update($request->toArray());
+        $this->uploadThumbnail($request, $category);
+        return new CategoryResource($category);
+    }
+
     private function uploadThumbnail($request, Category $category) {
         if($request->hasFile("thumbnail")) {
             $category->attach($request->file("thumbnail"), [ "key" => "thumbnail" ]);
+        }
+    }
+
+    private function updateDescendantsSlug(Category $category, $slug) {
+        if($category->slug !== $slug) {
+            $category->descendants->each(function($descendant) use ($category, $slug) {
+                $descendant->slug = Str::replaceFirst($category->slug, $slug, $descendant->slug);
+                $descendant->save();
+            });
         }
     }
 }
