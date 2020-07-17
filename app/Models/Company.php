@@ -12,4 +12,8 @@ class Company extends Model
     protected $table = "companies";
 
     protected $fillable = [ "name", "price_reduction", "slug" ];
+
+    public function devices() {
+        return $this->hasMany("App\Models\Device", "company_id", "id");
+    }
 }

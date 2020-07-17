@@ -19,10 +19,10 @@ class CreateDevicesTable extends Migration
             $table->string("slug");
             $table->decimal("base_price", 20, 2);
             $table->text("description")->nullable();
-            $table->bigInteger("category_id");
+            $table->bigInteger("company_id");
             $table->softDeletes();
             $table->timestamps();
-            $table->unique([ "slug", "category_id" ], "unique_device");
+            $table->unique([ "slug", "company_id" ], "unique_device");
         });
     }
 
