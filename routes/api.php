@@ -63,6 +63,11 @@ Route::group([ "prefix" => "admin" ], function () {
                 });
             });
         });
+        Route::group([ "prefix" => "devices" ], function () {
+            Route::group([ "prefix" => "device" ], function() {
+               Route::post("", "DevicesController@createDevice");
+            });
+        });
     });
 });
 
