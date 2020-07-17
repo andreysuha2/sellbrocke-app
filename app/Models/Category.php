@@ -21,6 +21,10 @@ class Category extends Model
         return $this->belongsToMany("App\Models\Defect", "category_defect", "category_id", "defect_id");
     }
 
+    public function devices() {
+        return $this->belongsToMany("App\Models\Device", "category_device", "category_id", "device_id");
+    }
+
     public function setParentAttribute($value) {
         $this->setParentIdAttribute($value);
     }

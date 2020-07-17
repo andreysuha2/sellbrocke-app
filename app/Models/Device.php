@@ -19,4 +19,8 @@ class Device extends Model
     public function company() {
         return $this->belongsTo("App\Models\Company", "company_id");
     }
+
+    public function categories() {
+        return $this->belongsToMany("App\Models\Device", "category_device", "device_id", "category_id");
+    }
 }
