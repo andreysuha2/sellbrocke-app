@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\CategoriesCollection;
+use App\Http\Resources\DevicesCollection;
 use App\Models\Category;
 use App\Models\Device;
 use Illuminate\Http\Request;
@@ -14,17 +14,17 @@ class DevicesController extends Controller
 {
     public function getDevices() {
         $devices = Device::paginate(5);
-        $companies = Company::all();
-        $categories = Category::whereIsLeaf();
+        $companies = Company::select("id", "name")->get();
+        $categories = Category::whereIsLeaf()->select("id", "name")->get();
         return response()->json([
-            "devices" => $devices,
+            "devices" => (new DevicesCollection($devices))->response()->getData(true),
             "companies" => $companies,
             "categories" => $categories
         ]);
     }
 
     public function createDevice(CreateDeviceRequest $request) {
-        $company = Company::findOrFail($request->company_id);
+        $company = Company::findOrFail($request->company);
         $device = $company->devices()->create($request->toArray());
         $device->categories()->attach($request->categories);
         return new DeviceResource($device);

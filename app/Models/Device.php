@@ -21,12 +21,12 @@ class Device extends Model
     }
 
     public function categories() {
-        return $this->belongsToMany("App\Models\Device", "category_device", "device_id", "category_id");
+        return $this->belongsToMany("App\Models\Category", "category_device", "device_id", "category_id");
     }
 
     // defects relation by example from https://stackoverflow.com/questions/37430217/has-many-through-many-to-many
     public function defects() {
-        return Defect::join("category_defect", "defect.id", "=", "category_defect.defect_id")
+        return Defect::join("category_defect", "defects.id", "=", "category_defect.defect_id")
                 ->join("categories", "category_defect.category_id", "=", "categories.id")
                 ->join("category_device", "categories.id", "=", "category_device.id")
                 ->join("devices", "category_device.device_id", "=", "devices.id")
