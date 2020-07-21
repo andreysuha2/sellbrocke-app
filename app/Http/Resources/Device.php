@@ -16,13 +16,18 @@ class Device extends JsonResource
      */
     public function toArray($request)
     {
+        $thumbnailRecord = $this->attachment("thumbnail");
+        $thumbnailPath = $thumbnailRecord ? $thumbnailRecord->url : null;
+
         return [
             "id" => $this->id,
             "name" => $this->name,
             "prices" => [
-                "base" => $this->base_price,
+                "base" => (float) $this->base_price,
                 "discounted" => $this->getDiscounted()
             ],
+            "thumbnail" => $thumbnailPath,
+            "slug" => $this->slug,
             "description" => $this->descrition,
             "company" => new CompanyResource($this->company),
             "categories" => new CategoriesCollection($this->categories)

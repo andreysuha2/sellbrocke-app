@@ -67,6 +67,9 @@ Route::group([ "prefix" => "admin" ], function () {
             Route::get("", "DevicesController@getDevices");
             Route::group([ "prefix" => "device" ], function() {
                Route::post("", "DevicesController@createDevice");
+               Route::group([ "prefix" => "{device}" ], function () {
+                   Route::put("", "DevicesController@updateDevice");
+               });
             });
         });
     });

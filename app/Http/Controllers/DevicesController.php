@@ -8,6 +8,7 @@ use App\Models\Device;
 use Illuminate\Http\Request;
 use App\Http\Requests\Device\CreateDevice as CreateDeviceRequest;
 use App\Http\Resources\Device as DeviceResource;
+use App\Http\Requests\Device\UpdateDevice as UpdateDeviceRequest;
 use App\Models\Company;
 
 class DevicesController extends Controller
@@ -27,6 +28,20 @@ class DevicesController extends Controller
         $company = Company::findOrFail($request->company);
         $device = $company->devices()->create($request->toArray());
         $device->categories()->attach($request->categories);
+        $this->attachThumbnail($device, $request);
+        return new DeviceResource($device);
+    }
+
+    public function updateDevice(Device $device, UpdateDeviceRequest $request) {
+        $device->update($request->toArray());
+        if($request->has("company")) {
+            $company = Company::find($request->company);
+            $device->company()->associate($company);
+            $device->save();
+        }
+        if($request->has("detach_categories")) $device->categories()->detach($request->detach_categories);
+        if($request->has("attach_categories")) $device->categories()->attach($request->attach_categories);
+        $this->attachThumbnail($device, $request);
         return new DeviceResource($device);
     }
 
