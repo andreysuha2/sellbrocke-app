@@ -12,7 +12,7 @@ use App\Http\Requests\Defect\UpdateDefect as UpdateDefectRequest;
 class DefectsController extends Controller
 {
     public function getDefects() {
-        $defects = Defect::orderBy("created_at", "desc")->paginate(5);
+        $defects = Defect::orderBy("id", "desc")->paginate(10);
         return (new DefectsCollection($defects))->response()->getData(true);
     }
 
@@ -35,7 +35,7 @@ class DefectsController extends Controller
     public function deleteDefect(Defect $defect, Request $request) {
         $defect->delete();
         $lastDefectId = $request->lastDefectId;
-        $nextDefect = $lastDefectId ? Defect::orderBy("created_at", "desc")->where("id", "<", $request->lastDefectId)->first() : null;
+        $nextDefect = $lastDefectId ? Defect::orderBy("id", "desc")->where("id", "<", $request->lastDefectId)->first() : null;
         $nextDefect = $nextDefect ? new DefectResource($nextDefect) : null;
         return response()->json([ "defect" => new DefectResource($defect), "nextDefect" => $nextDefect ]);
     }
