@@ -45,6 +45,11 @@ class DevicesController extends Controller
         return new DeviceResource($device);
     }
 
+    public function removeDevice(Device $device) {
+        $device->forceDelete();
+        return new DeviceResource($device);
+    }
+
     private function attachThumbnail(Device $device, $request) {
         if($request->hasFile("thumbnail")) {
             $device->attach($request->file("thumbnail"), [ "key" => "thumbnail" ]);

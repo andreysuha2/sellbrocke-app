@@ -36,6 +36,6 @@ class Device extends JsonResource
 
     private function getDiscounted() {
         $percent = (100 - $this->company->price_reduction) / 100;
-        return $this->base_price * $percent;
+        return round($this->base_price * $percent, 2);
     }
 }

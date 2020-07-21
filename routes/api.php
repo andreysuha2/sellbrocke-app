@@ -69,6 +69,7 @@ Route::group([ "prefix" => "admin" ], function () {
                Route::post("", "DevicesController@createDevice");
                Route::group([ "prefix" => "{device}" ], function () {
                    Route::put("", "DevicesController@updateDevice");
+                   Route::delete("", "DevicesController@removeDevice");
                });
             });
         });

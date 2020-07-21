@@ -3,6 +3,10 @@
 namespace App\Providers;
 
 use App\Console\Commands\ModelMakeCommand;
+use App\Models\Category;
+use App\Models\Device;
+use App\Observers\CategoryObserver;
+use App\Observers\DeviceObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,5 +30,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Category::observe(CategoryObserver::class);
+        Device::observe(DeviceObserver::class);
     }
 }
