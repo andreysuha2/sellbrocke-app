@@ -19,7 +19,7 @@ class DevicesTableSeeder extends Seeder
     private $faker;
 
     public function __construct() {
-        $this->categoriesIds = range(1, 18);
+        $this->categoriesIds = \App\Models\Category::whereIsLeaf()->get()->map(function ($category) { return $category->id; });
         $this->faker = \Faker\Factory::create();
     }
 
