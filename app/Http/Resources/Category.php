@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Log;
 
 class Category extends JsonResource
 {
@@ -40,7 +41,13 @@ class Category extends JsonResource
             "slug" => $this->slug,
             "defects" => $this->defects()->select("defects.id", "defects.name")->get(),
             "descendantsCount" => $this->descendants()->count(),
-            "children" => $this->when($this->withChildren, $children)
+            "children" => $this->when($this->withChildren, $children),
+            "devicesCount" => $this->getDevicesCount()
         ];
+    }
+
+    private function getDevicesCount() {
+        if($this->descendants()->exists()) return $this->childrenDevices()->count();
+        else return $count = $this->devices()->count();
     }
 }

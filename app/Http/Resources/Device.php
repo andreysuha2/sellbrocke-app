@@ -28,7 +28,7 @@ class Device extends JsonResource
             ],
             "thumbnail" => $thumbnailPath,
             "slug" => $this->slug,
-            "description" => $this->descrition,
+            "description" => $this->description,
             "company" => new CompanyResource($this->company),
             "categories" => new CategoriesCollection($this->categories)
         ];
