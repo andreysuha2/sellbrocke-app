@@ -23,7 +23,8 @@ class Company extends JsonResource
             "name" => $this->name,
             "slug" => $this->slug,
             "priceReduction" => (float) $this->price_reduction,
-            "logo" => $logoPath
+            "logo" => $logoPath,
+            "devicesCount" => $this->devices()->count()
         ];
     }
 }
