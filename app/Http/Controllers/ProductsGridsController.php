@@ -12,8 +12,12 @@ use App\Http\Requests\ProductGrid\UpdateProductGrid as UpdateProductGridRequest;
 class ProductsGridsController extends Controller
 {
     public function getProductsGrids() {
-        $productsGrids = ProductGrid::pagiante(10);
+        $productsGrids = ProductGrid::paginate(10);
         return (new ProductGridCollection($productsGrids))->response()->getData(true);
+    }
+
+    public function getProductGrid(ProductGrid $productGrid) {
+        return new ProductGridResource($productGrid);
     }
 
     public function createProductGrid(CreateProductGridRequest $request) {

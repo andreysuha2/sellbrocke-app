@@ -77,7 +77,8 @@ Route::group([ "prefix" => "admin" ], function () {
             Route::get("", "ProductsGridsController@getProductsGrids");
             Route::group([ "prefix" => "product-grid" ], function () {
                 Route::post("", "ProductsGridsController@createProductGrid");
-                Route::group([ "prefix" => "{produc_grid}" ], function () {
+                Route::group([ "prefix" => "{product_grid}" ], function () {
+                    Route::get("", "ProductsGridsController@getProductGrid");
                     Route::put("", "ProductsGridsController@updateProductGrid");
                     Route::delete("", "ProductsGridController@deleteProductGrid");
                 });
