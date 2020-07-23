@@ -30,7 +30,7 @@ class CreateDevice extends FormRequest
             "company" => "required|exists:companies,id",
             "categories" => "required|present|array",
             "categories.*" => "numeric|exists:categories,id",
-            "slug" => "required|unique:devices,slug,NULL,id,company_id,$this->company_id"
+            "slug" => "required|unique:devices,slug,NULL,id,company_id,$this->company_id|alpha_dash"
         ];
     }
 

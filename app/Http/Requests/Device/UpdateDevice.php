@@ -34,7 +34,7 @@ class UpdateDevice extends FormRequest
             "attach_categories.*" => "sometimes|numeric|exists:categories,id|unique:category_device,category_id,NULL,id,device_id,$deviceId",
             "detach_categories" => "sometimes|required|present|array",
             "detach_categories.*" => "sometimes|numeric",
-            "slug" => "sometimes|required|unique:devices,slug,NULL,id,company_id,$this->company_id"
+            "slug" => "sometimes|required|unique:devices,slug,NULL,id,company_id,$this->company_id|alpha_dash"
         ];
     }
 
