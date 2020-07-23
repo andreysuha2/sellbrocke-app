@@ -73,6 +73,9 @@ Route::group([ "prefix" => "admin" ], function () {
                });
             });
         });
+        Route::group([ "prefix" => "products-grids" ], function () {
+
+        });
     });
 });
 
