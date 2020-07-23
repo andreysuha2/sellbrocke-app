@@ -17,7 +17,8 @@ class CreateProductsGridsTable extends Migration
             $table->id();
             $table->string("name");
             $table->enum("type", [ "carrier", "size" ]);
-            $table->string("slug");
+            $table->string("slug")->unique();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
