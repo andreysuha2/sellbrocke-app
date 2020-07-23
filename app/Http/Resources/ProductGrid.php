@@ -15,10 +15,16 @@ class ProductGrid extends JsonResource
      */
     public function toArray($request)
     {
+        $hasThumbnail = $this->type === "carrier";
+        $thumbnailRecord = $hasThumbnail ? $this->attachment("thumbnail") : null;
+        $thumbnailPath = $thumbnailRecord ? $thumbnailRecord->url : null;
+
         return [
             "id" => $this->id,
             "name" => $this->name,
-            "slug" => $this->slug
+            "slug" => $this->slug,
+            "type" => $this->type,
+            "thumbnail" => $this->when($hasThumbnail, $thumbnailPath)
         ];
     }
 }
