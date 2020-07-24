@@ -4,27 +4,27 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class Company extends JsonResource
+class ProductGrid extends JsonResource
 {
+    public static $wrap = "productGrid";
     /**
      * Transform the resource into an array.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return array
      */
-    public static $wrap = "company";
-
     public function toArray($request)
     {
-        $logoRecord = $this->attachment("logo");
-        $logoPath = $logoRecord ? $logoRecord->url : null;
+        $hasThumbnail = $this->type === "carrier";
+        $thumbnailRecord = $hasThumbnail ? $this->attachment("thumbnail") : null;
+        $thumbnailPath = $thumbnailRecord ? $thumbnailRecord->url : null;
+
         return [
             "id" => $this->id,
             "name" => $this->name,
             "slug" => $this->slug,
-            "priceReduction" => (float) $this->price_reduction,
-            "logo" => $logoPath,
-            "devicesCount" => $this->devices()->count()
+            "type" => $this->type,
+            "thumbnail" => $this->when($hasThumbnail, $thumbnailPath)
         ];
     }
 }

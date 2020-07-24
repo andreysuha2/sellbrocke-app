@@ -35,7 +35,7 @@ class DefectsController extends Controller
     public function deleteDefect(Defect $defect, Request $request) {
         $defect->delete();
         $lastDefectId = $request->lastDefectId;
-        $nextDefect = $lastDefectId ? Defect::orderBy("id", "desc")->where("id", "<", $request->lastDefectId)->first() : null;
+        $nextDefect = $lastDefectId ? Defect::orderBy("id", "desc")->where("id", "<", $lastDefectId)->first() : null;
         $nextDefect = $nextDefect ? new DefectResource($nextDefect) : null;
         return response()->json([ "defect" => new DefectResource($defect), "nextDefect" => $nextDefect ]);
     }

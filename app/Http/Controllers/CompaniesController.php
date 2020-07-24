@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use Illuminate\Support\Facades\Gate;
 use App\Http\Resources\CompaniesCollection;
 use App\Http\Resources\Company as CompanyResource;
 use App\Http\Requests\Company\StoreCompany as StoreCompanyRequest;
@@ -34,7 +35,7 @@ class CompaniesController extends Controller
     }
 
     public function deleteCompany(Company $company) {
-        // TODO: check relation with devices
+        Gate::authorize("delete-company", $company);
         $company->delete();
         return new CompanyResource($company);
     }

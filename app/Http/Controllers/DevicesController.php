@@ -14,7 +14,7 @@ use App\Models\Company;
 class DevicesController extends Controller
 {
     public function getDevices() {
-        $devices = Device::paginate(5);
+        $devices = Device::orderBy("id", "desc")->paginate(10);
         $companies = Company::select("id", "name")->get();
         $categories = Category::whereIsLeaf()->select("id", "name")->get();
         return response()->json([
@@ -45,9 +45,12 @@ class DevicesController extends Controller
         return new DeviceResource($device);
     }
 
-    public function removeDevice(Device $device) {
+    public function removeDevice(Device $device, Request $request) {
         $device->forceDelete();
-        return new DeviceResource($device);
+        $lastDeviceId = $request->lastDeviceId;
+        $nextDevice = $lastDeviceId ? Device::orderBy("id", "desc")->where("id", "<", $lastDeviceId)->first() : null;
+        $nextDevice = $nextDevice ? new DeviceResource($nextDevice) : null;
+        return response()->json([ "device" => new DeviceResource($device), "nextDevice" => $nextDevice ]);
     }
 
     private function attachThumbnail(Device $device, $request) {
