@@ -12,7 +12,7 @@ use App\Http\Requests\ProductGrid\UpdateProductGrid as UpdateProductGridRequest;
 class ProductsGridsController extends Controller
 {
     public function getProductsGrids() {
-        $productsGrids = ProductGrid::paginate(10);
+        $productsGrids = ProductGrid::orderBy("id", "desc")->paginate(10);
         return (new ProductGridCollection($productsGrids))->response()->getData(true);
     }
 
@@ -32,14 +32,20 @@ class ProductsGridsController extends Controller
         return new ProductGridResource($productGrid);
     }
 
-    public function deleteProductGrid(ProductGrid $productGrid) {
+    public function deleteProductGrid(ProductGrid $productGrid, Request $request) {
         $productGrid->delete();
-        return new ProductGridResource($productGrid);
+        $lastProductGrid = $request->lastProductGridId;
+        $nextProductGrid = $lastProductGrid ? ProductGrid::orderBy("id", "desc")->where("id", "<", $lastProductGrid)->first() : null;
+        $nextProductGrid = $nextProductGrid ? new ProductGridResource($nextProductGrid) : null;
+        return response()->json([ "productGrid" => new ProductGridResource($productGrid), "nextProductGrid" => $nextProductGrid ]);
     }
 
     private function attachThumbnail(ProductGrid $productGrid, $request) {
         if($productGrid->type === "carrier" && $request->hasFile("thumbnail")) {
             $productGrid->attach($request->file("thumbnail"), [ "key" => "thumbnail" ]);
+        } else if ($productGrid->type === "size") {
+            $attachment = $productGrid->attachment("thumbnail");
+            if($attachment) $attachment->delete();
         }
     }
 }

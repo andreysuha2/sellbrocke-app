@@ -80,7 +80,7 @@ Route::group([ "prefix" => "admin" ], function () {
                 Route::group([ "prefix" => "{product_grid}" ], function () {
                     Route::get("", "ProductsGridsController@getProductGrid");
                     Route::put("", "ProductsGridsController@updateProductGrid");
-                    Route::delete("", "ProductsGridController@deleteProductGrid");
+                    Route::delete("", "ProductsGridsController@deleteProductGrid");
                 });
             });
         });
