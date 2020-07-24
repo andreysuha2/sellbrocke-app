@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\DevicesCollection;
 use App\Models\Category;
 use App\Models\Device;
+use App\Models\ProductGrid;
 use Illuminate\Http\Request;
 use App\Http\Requests\Device\CreateDevice as CreateDeviceRequest;
 use App\Http\Resources\Device as DeviceResource;
@@ -17,10 +18,12 @@ class DevicesController extends Controller
         $devices = Device::orderBy("id", "desc")->paginate(10);
         $companies = Company::select("id", "name")->get();
         $categories = Category::whereIsLeaf()->select("id", "name")->get();
+        $productsGrids = ProductGrid::select("id", "name", "type")->get();
         return response()->json([
             "devices" => (new DevicesCollection($devices))->response()->getData(true),
             "companies" => $companies,
-            "categories" => $categories
+            "categories" => $categories,
+            "productsGrids" => $productsGrids
         ]);
     }
 

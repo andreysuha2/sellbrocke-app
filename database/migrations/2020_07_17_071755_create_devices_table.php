@@ -20,6 +20,7 @@ class CreateDevicesTable extends Migration
             $table->decimal("base_price", 20, 2);
             $table->text("description")->nullable();
             $table->bigInteger("company_id");
+            $table->boolean("use_products_grids")->default(false);
             $table->softDeletes();
             $table->timestamps();
             $table->unique([ "slug", "company_id" ], "unique_device");

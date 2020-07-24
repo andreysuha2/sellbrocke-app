@@ -25,7 +25,7 @@ class Device extends Model
     }
 
     public function productsGrids() {
-        return $this->belongsToMany("App\Models\Devices", "device_product_grid", "device_id", "product_grid_id");
+        return $this->belongsToMany("App\Models\ProductGrid", "device_product_grid", "device_id", "product_grid_id");
     }
 
     // defects relation by example from https://stackoverflow.com/questions/37430217/has-many-through-many-to-many
