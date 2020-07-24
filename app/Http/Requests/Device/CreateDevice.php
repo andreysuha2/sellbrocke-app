@@ -30,7 +30,9 @@ class CreateDevice extends FormRequest
             "company" => "required|exists:companies,id",
             "categories" => "required|present|array",
             "categories.*" => "numeric|exists:categories,id",
-            "slug" => "required|unique:devices,slug,NULL,id,company_id,$this->company_id|alpha_dash"
+            "slug" => "required|unique:devices,slug,NULL,id,company_id,$this->company_id|alpha_dash",
+            "products_grids" => "array",
+            "products_grids.*" => "numeric|exists:products_grids,id"
         ];
     }
 
@@ -39,5 +41,10 @@ class CreateDevice extends FormRequest
         $this->merge([
             "categories" => json_decode($this->categories)
         ]);
+        if($this->request->has("use_products_grids") && $this->use_products_grids) {
+            $this->merge([
+                "products_grids" => json_decode($this->products_grids)
+            ]);
+        }
     }
 }

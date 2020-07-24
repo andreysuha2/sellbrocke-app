@@ -31,6 +31,9 @@ class DevicesController extends Controller
         $company = Company::findOrFail($request->company);
         $device = $company->devices()->create($request->toArray());
         $device->categories()->attach($request->categories);
+        if($request->has("use_products_grids") && $request->use_products_grids) {
+            $device->productsGrids()->attach($request->products_grids);
+        }
         $this->attachThumbnail($device, $request);
         return new DeviceResource($device);
     }

@@ -12,7 +12,7 @@ class Device extends Model
 
     protected $table = "devices";
 
-    protected $fillable = [ "name", "description", "base_price", "slug" ];
+    protected $fillable = [ "name", "description", "base_price", "slug", "use_products_grids" ];
 
     protected $hidden = [ "company_id" ];
 
