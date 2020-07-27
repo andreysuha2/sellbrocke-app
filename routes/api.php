@@ -63,6 +63,27 @@ Route::group([ "prefix" => "admin" ], function () {
                 });
             });
         });
+        Route::group([ "prefix" => "devices" ], function () {
+            Route::get("", "DevicesController@getDevices");
+            Route::group([ "prefix" => "device" ], function() {
+               Route::post("", "DevicesController@createDevice");
+               Route::group([ "prefix" => "{device}" ], function () {
+                   Route::put("", "DevicesController@updateDevice");
+                   Route::delete("", "DevicesController@removeDevice");
+               });
+            });
+        });
+        Route::group([ "prefix" => "products-grids" ], function () {
+            Route::get("", "ProductsGridsController@getProductsGrids");
+            Route::group([ "prefix" => "product-grid" ], function () {
+                Route::post("", "ProductsGridsController@createProductGrid");
+                Route::group([ "prefix" => "{product_grid}" ], function () {
+                    Route::get("", "ProductsGridsController@getProductGrid");
+                    Route::put("", "ProductsGridsController@updateProductGrid");
+                    Route::delete("", "ProductsGridsController@deleteProductGrid");
+                });
+            });
+        });
     });
 });
 
