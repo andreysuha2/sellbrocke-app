@@ -18,6 +18,10 @@ class Device extends JsonResource
     {
         $thumbnailRecord = $this->attachment("thumbnail");
         $thumbnailPath = $thumbnailRecord ? $thumbnailRecord->url : null;
+        if($this->use_products_grids) {
+            $sizes = $this->productsGrids->filter(function ($productGrid) { return $productGrid->type === "size"; });
+            $carriers = $this->productsGrids->filter(function ($productGrid) { return $productGrid->type === "carrier"; });
+        }
 
         return [
             "id" => $this->id,
@@ -30,7 +34,12 @@ class Device extends JsonResource
             "slug" => $this->slug,
             "description" => $this->description,
             "company" => new CompanyResource($this->company),
-            "categories" => new CategoriesCollection($this->categories)
+            "categories" => new CategoriesCollection($this->categories),
+            "useProductsGrids" => (int) $this->use_products_grids,
+            "productsGrids" => $this->when($this->use_products_grids, [
+                "sizes" => isset($sizes) && count($sizes) ? new ProductGridCollection($sizes) : null,
+                "carriers" => isset($carriers) && count($carriers) ? new ProductGridCollection($carriers) : null
+            ])
         ];
     }
 
