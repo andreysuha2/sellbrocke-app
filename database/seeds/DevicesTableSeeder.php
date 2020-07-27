@@ -16,10 +16,17 @@ class DevicesTableSeeder extends Seeder
     ];
 
     private $categoriesIds;
+    private $productsGridsIds = [ "carriers" => null, "sizes" => null ];
     private $faker;
 
     public function __construct() {
         $this->categoriesIds = \App\Models\Category::whereIsLeaf()->get()->map(function ($category) { return $category->id; });
+        $this->productsGridsIds["carriers"] = \App\Models\ProductGrid::where("type", "carrier")
+                                                                      ->get()
+                                                                      ->map(function ($productGrid) { return $productGrid->id; });
+        $this->productsGridsIds["sizes"] = \App\Models\ProductGrid::where("type", "size")
+                                                                     ->get()
+                                                                     ->map(function ($productGrid) { return $productGrid->id; });
         $this->faker = \Faker\Factory::create();
     }
 
@@ -33,6 +40,10 @@ class DevicesTableSeeder extends Seeder
         factory(App\Models\Device::class, 100)->create()->each(function ($device) {
             $device->attach($this->images[rand(0, 7)], [ "key" => "thumbnail" ]);
             $device->categories()->attach($this->faker->randomElements($this->categoriesIds, rand(1, 5)));
+            if($device->use_products_grids) {
+                $device->productsGrids()->attach($this->faker->randomElements($this->productsGridsIds["carriers"], rand(1, 5)));
+                $device->productsGrids()->attach($this->faker->randomElements($this->productsGridsIds["sizes"], rand(1, 5)));
+            }
         });
     }
 }

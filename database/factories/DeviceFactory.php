@@ -11,6 +11,7 @@ $factory->define(Device::class, function (Faker $faker) {
         "slug" => $faker->unique()->word(),
         "company_id" => rand(1, 8),
         "base_price" => $faker->randomFloat(2, 1),
-        "description" => $faker->text(200)
+        "description" => $faker->text(200),
+        "use_products_grids" => $faker->boolean
     ];
 });
