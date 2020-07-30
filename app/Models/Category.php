@@ -33,6 +33,14 @@ class Category extends Model
         });
     }
 
+    public function companies() {
+        if(Category::where("parent_id", $this->id)->exists()) return null;
+        else return Category::where("categories.id", $this->id)
+                            ->join("category_device", "categories.id", "=", "category_device.category_id")
+                            ->join("devices", "category_device.device_id", "=", "devices.id")
+                            ->join("companies", "devices.company_id", "=", "companies.id");
+    }
+
     public function setParentAttribute($value) {
         $this->setParentIdAttribute($value);
     }
