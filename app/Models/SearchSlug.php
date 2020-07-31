@@ -10,9 +10,15 @@ class SearchSlug extends Model
 
     protected $fillable = [ "category_part", "company_part", "device_part" ];
 
+    protected $appends = [ "type" ];
+
     public $timestamps = false;
 
     public function search() {
         return $this->morphTo();
+    }
+
+    public function getTypeAttribute() {
+        return strtolower(last(explode("\\", $this->search_type)));
     }
 }
