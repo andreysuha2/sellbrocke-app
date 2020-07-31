@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class SearchSlug extends Model
 {
-    protected $table = "search_slug";
+    protected $table = "search_slugs";
 
-    protected $fillable = [ "slug" ];
+    protected $fillable = [ "category_part", "company_part", "device_part" ];
 
     public $timestamps = false;
 

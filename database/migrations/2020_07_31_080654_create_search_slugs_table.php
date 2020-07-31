@@ -15,7 +15,10 @@ class CreateSearchSlugsTable extends Migration
     {
         Schema::create('search_slugs', function (Blueprint $table) {
             $table->id();
-            $table->string("slug", 1500)->unique();
+            $table->string("slug", 500)->unique();
+            $table->string("category_part", 500);
+            $table->string("company_part", 500)->nullable();
+            $table->string("device_part", 500)->nullable();
             $table->morphs("search");
         });
     }

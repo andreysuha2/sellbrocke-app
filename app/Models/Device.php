@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use Bnb\Laravel\Attachments\HasAttachment;
+use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Device extends Model
 {
-    use SoftDeletes, HasAttachment;
+    use SoftDeletes, HasAttachment, PivotEventTrait;
 
     protected $table = "devices";
 

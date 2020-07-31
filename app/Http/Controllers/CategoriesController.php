@@ -42,9 +42,6 @@ class CategoriesController extends Controller
     }
 
     public function updateCategory(Category $category, UpdateCategoryRequest $request) {
-        if($request->has("slug")) {
-            $this->updateDescendantsSlug($category, $request->slug);
-        }
         $category->update($request->toArray());
         if($request->has("attach_defects")) $category->defects()->attach($request->attach_defects);
         if($request->has("detach_defects")) $category->defects()->detach($request->detach_defects);
@@ -61,15 +58,6 @@ class CategoriesController extends Controller
     private function uploadThumbnail($request, Category $category) {
         if($request->hasFile("thumbnail")) {
             $category->attach($request->file("thumbnail"), [ "key" => "thumbnail" ]);
-        }
-    }
-
-    private function updateDescendantsSlug(Category $category, $slug) {
-        if($category->slug !== $slug) {
-            $category->descendants->each(function($descendant) use ($category, $slug) {
-                $descendant->slug = Str::replaceFirst($category->slug, $slug, $descendant->slug);
-                $descendant->save();
-            });
         }
     }
 }
