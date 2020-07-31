@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSearchSlugTable extends Migration
+class CreateSearchSlugsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateSearchSlugTable extends Migration
      */
     public function up()
     {
-        Schema::create('search_slug', function (Blueprint $table) {
+        Schema::create('search_slugs', function (Blueprint $table) {
             $table->id();
             $table->string("slug", 1500)->unique();
-            $table->morphs("slug");
+            $table->morphs("search");
         });
     }
 
@@ -27,6 +27,6 @@ class CreateSearchSlugTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('search_slug');
+        Schema::dropIfExists('search_slugs');
     }
 }

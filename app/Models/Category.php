@@ -41,6 +41,10 @@ class Category extends Model
                             ->select("companies.id", "companies.name");
     }
 
+    public function searchSlugs() {
+        return $this->morphMany("App\Models\SearchSlug", "search");
+    }
+
     public function setParentAttribute($value) {
         $this->setParentIdAttribute($value);
     }

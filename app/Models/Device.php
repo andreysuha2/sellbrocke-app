@@ -28,6 +28,10 @@ class Device extends Model
         return $this->belongsToMany("App\Models\ProductGrid", "device_product_grid", "device_id", "product_grid_id");
     }
 
+    public function searchSlugs() {
+        return $this->morphMany("App\Models\SearchSlug", "search");
+    }
+
     // defects relation by example from https://stackoverflow.com/questions/37430217/has-many-through-many-to-many
     public function defects() {
         return Defect::join("category_defect", "defects.id", "=", "category_defect.defect_id")
