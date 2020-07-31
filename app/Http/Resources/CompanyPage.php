@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CategoryPage extends JsonResource
+class CompanyPage extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,11 +14,13 @@ class CategoryPage extends JsonResource
      */
     public function toArray($request)
     {
+        $logoRecord = $this->attachment("logo");
+        $logoPath = $logoRecord ? $logoRecord->url : null;
+
         return [
-            "slug" => $this->slug,
+            "id" => $this->id,
             "name" => $this->name,
-            "description" => $this->description,
-            "companies" => new CompaniesPagesCollection($this->companies()->get())
+            "logo" => $logoPath
         ];
     }
 }
