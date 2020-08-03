@@ -37,8 +37,8 @@ class Category extends Model
         return Company::where("category_device.category_id", $this->id)
                             ->join("devices", "companies.id", "=", "devices.company_id")
                             ->join("category_device", "devices.id", "=", "category_device.device_id")
-                            ->groupBy("companies.id", "companies.name")
-                            ->select("companies.id", "companies.name");
+                            ->groupBy("companies.id", "companies.name", "companies.slug")
+                            ->select("companies.id", "companies.name", "companies.slug");
     }
 
     public function searchSlugs() {

@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use App\Http\Resources\DevicePage as DevicePageResource;
 
 class DevicesPageCollection extends ResourceCollection
 {
@@ -14,6 +15,8 @@ class DevicesPageCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return $this->collection->map(function ($device) {
+            return new DevicePageResource($device);
+        })->toArray();
     }
 }

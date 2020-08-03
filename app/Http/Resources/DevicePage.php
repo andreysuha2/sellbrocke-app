@@ -6,6 +6,23 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class DevicePage extends JsonResource
 {
+
+    private $size = null;
+    private $carrier = null;
+    private $withProductsGrids = false;
+
+    public function __construct($resource, $size = null, $carrier = null) {
+        parent::__construct($resource);
+        $this->carrier = $carrier;
+        $this->size =$size;
+        if($this->use_products_grids) {
+            $this->withProductsGrids = (boolean) ($size && $carrier);
+            $this->carrier = $this->productsGrids()->where("type", "carrier")->where("slug", $carrier)->first();
+            $this->size = $this->productsGrids()->where("type", "size")->where("slug", $size)->first();
+            if($size && $carrier && (!$this->carrier || !$this->size)) abort(404);
+        }
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -16,14 +33,13 @@ class DevicePage extends JsonResource
     {
         $thumbnailRecord = $this->attachment("thumbnail");
         $thumbnailPath = $thumbnailRecord ? $thumbnailRecord->url : null;
-        if($this->use_products_grids) {
-            $sizes = $this->productsGrids->filter(function ($productGrid) { return $productGrid->type === "size"; });
-            $carriers = $this->productsGrids->filter(function ($productGrid) { return $productGrid->type === "carrier"; });
-        }
+        if($this->withProductsGrids) {
+            $name = $this->name . " " . $this->size->name . " (" . $this->carrier->name . ")";
+        } else $name = $this->name;
 
         return [
             "id" => $this->id,
-            "name" => $this->name,
+            "name" => $name,
             "prices" => [
                 "base" => (float) $this->base_price,
                 "discounted" => $this->getDiscounted()
@@ -31,11 +47,7 @@ class DevicePage extends JsonResource
             "thumbnail" => $thumbnailPath,
             "slug" => $this->slug,
             "description" => $this->description,
-            "useProductsGrids" => (int) $this->use_products_grids,
-            "productsGrids" => $this->when($this->use_products_grids, [
-                "sizes" => isset($sizes) && count($sizes) ? new ProductGridCollection($sizes) : null,
-                "carriers" => isset($carriers) && count($carriers) ? new ProductGridCollection($carriers) : null
-            ])
+            "productsGrids" => $this->when($this->withProductsGrids, [ "size" => $this->size, "carrier" => $this->carrier ])
         ];
     }
 

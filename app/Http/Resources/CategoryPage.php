@@ -14,12 +14,15 @@ class CategoryPage extends JsonResource
      */
     public function toArray($request)
     {
+        $thumbnailRecord = $this->attachment("thumbnail");
+        $thumbnailPath = $thumbnailRecord ? $thumbnailRecord->url : null;
+
         return [
             "id" => $this->id,
             "slug" => $this->slug,
             "name" => $this->name,
             "description" => $this->description,
-            "companies" => new CompaniesPagesCollection($this->companies()->get())
+            "thumbnail" => $thumbnailPath
         ];
     }
 }

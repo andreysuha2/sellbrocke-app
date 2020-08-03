@@ -21,7 +21,7 @@ class CompanyPage extends JsonResource
             "id" => $this->id,
             "name" => $this->name,
             "logo" => $logoPath,
-            "devices" => new DevicesPageCollection($this->devices)
+            "slug" => $this->slug
         ];
     }
 }

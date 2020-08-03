@@ -21,14 +21,14 @@ class MerchantController extends Controller
         if(!$queryString) {
             $categories = Category::whereIsRoot()->get();
             $result = [
-                "items" => new CategoriesPageCollection($categories),
-                "type" => "categoriesList"
+                "list" => new CategoriesPageCollection($categories),
+                "listType" => "categoriesList"
             ];
             return $result;
         } else {
             $searchSlug = SearchSlug::where("slug", $queryString)->firstOrFail();
             SearchSlugResource::withoutWrapping();
-            return new SearchSlugResource($searchSlug);
+            return new SearchSlugResource($searchSlug, $request);
         }
     }
 

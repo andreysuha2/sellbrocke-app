@@ -33,20 +33,9 @@ class Device extends Model
         return $this->morphMany("App\Models\SearchSlug", "search");
     }
 
-    // defects relation by example from https://stackoverflow.com/questions/37430217/has-many-through-many-to-many
     public function defects() {
-        return Defect::join("category_defect", "defects.id", "=", "category_defect.defect_id")
-                ->join("categories", "category_defect.category_id", "=", "categories.id")
-                ->join("category_device", "categories.id", "=", "category_device.id")
-                ->join("devices", "category_device.device_id", "=", "devices.id")
-                ->where("devices.id", $this->id);
-    }
-
-    public function getDefectsAttribute() {
-        if(!$this->relationLoaded('categories') || !$this->categories->first()->relationLoaded("defects")) {
-            $this->load('categories.defects');
-        }
-
-        return collect($this->categories->lists("defects"))->collapse()->unique();
+        return $this->categories->map(function ($category) {
+            return $category->defects;
+        });
     }
 }
