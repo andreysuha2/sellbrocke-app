@@ -34,8 +34,12 @@ class Device extends Model
     }
 
     public function defects() {
-        return $this->categories->map(function ($category) {
-            return $category->defects;
+        $categories = $this->categories->map(function ($category) {
+            return Category::ancestorsAndSelf($category->id);
+        });
+        $categoriesIds = $categories->flatten()->unique("id")->pluck("id");
+        return Defect::whereHas("categories", function ($query) use ($categoriesIds) {
+            $query->whereIn("categories.id", $categoriesIds);
         });
     }
 }

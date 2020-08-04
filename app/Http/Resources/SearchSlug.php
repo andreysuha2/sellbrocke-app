@@ -107,7 +107,7 @@ class SearchSlug extends JsonResource
             $carrier = $item->use_products_grids ? $this->request->carrier: null;
             $result["item"] = new DevicePageResource($item, $size, $carrier);
             $result["pageListType"] = "defects";
-            $result["list"] = $item->defects()->flatten();
+            $result["list"] = $item->defects()->get();
         }
         return $result;
     }
