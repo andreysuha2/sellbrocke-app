@@ -33,6 +33,18 @@ class Category extends Model
         });
     }
 
+    public function companies() {
+        return Company::where("category_device.category_id", $this->id)
+                            ->join("devices", "companies.id", "=", "devices.company_id")
+                            ->join("category_device", "devices.id", "=", "category_device.device_id")
+                            ->groupBy("companies.id", "companies.name", "companies.slug")
+                            ->select("companies.id", "companies.name", "companies.slug");
+    }
+
+    public function searchSlugs() {
+        return $this->morphMany("App\Models\SearchSlug", "search");
+    }
+
     public function setParentAttribute($value) {
         $this->setParentIdAttribute($value);
     }

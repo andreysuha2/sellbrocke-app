@@ -16,4 +16,8 @@ class Company extends Model
     public function devices() {
         return $this->hasMany("App\Models\Device", "company_id", "id");
     }
+
+    public function searchSlugs() {
+        return $this->morphMany("App\Models\SearchSlug", "search");
+    }
 }

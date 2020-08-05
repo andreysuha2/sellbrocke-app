@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use Bnb\Laravel\Attachments\HasAttachment;
+use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Device extends Model
 {
-    use SoftDeletes, HasAttachment;
+    use SoftDeletes, HasAttachment, PivotEventTrait;
 
     protected $table = "devices";
 
@@ -28,20 +29,17 @@ class Device extends Model
         return $this->belongsToMany("App\Models\ProductGrid", "device_product_grid", "device_id", "product_grid_id");
     }
 
-    // defects relation by example from https://stackoverflow.com/questions/37430217/has-many-through-many-to-many
-    public function defects() {
-        return Defect::join("category_defect", "defects.id", "=", "category_defect.defect_id")
-                ->join("categories", "category_defect.category_id", "=", "categories.id")
-                ->join("category_device", "categories.id", "=", "category_device.id")
-                ->join("devices", "category_device.device_id", "=", "devices.id")
-                ->where("devices.id", $this->id);
+    public function searchSlugs() {
+        return $this->morphMany("App\Models\SearchSlug", "search");
     }
 
-    public function getDefectsAttribute() {
-        if(!$this->relationLoaded('categories') || !$this->categories->first()->relationLoaded("defects")) {
-            $this->load('categories.defects');
-        }
-
-        return collect($this->categories->lists("defects"))->collapse()->unique();
+    public function defects() {
+        $categories = $this->categories->map(function ($category) {
+            return Category::ancestorsAndSelf($category->id);
+        });
+        $categoriesIds = $categories->flatten()->unique("id")->pluck("id");
+        return Defect::whereHas("categories", function ($query) use ($categoriesIds) {
+            $query->whereIn("categories.id", $categoriesIds);
+        });
     }
 }
