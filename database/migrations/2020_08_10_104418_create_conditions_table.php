@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOrderDeviceDefectTable extends Migration
+class CreateConditionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateOrderDeviceDefectTable extends Migration
      */
     public function up()
     {
-        Schema::create('order_device_defect', function (Blueprint $table) {
+        Schema::create('conditions', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger("order_device_id");
-            $table->bigInteger("defect_id");
-            $table->unique([ "order_device_id", "defect_id" ], "unique_bundle");
+            $table->string("label");
+            $table->text("description");
+            $table->decimal("discount_percent", 5, 2);
+            $table->timestamps();
         });
     }
 
@@ -28,6 +29,6 @@ class CreateOrderDeviceDefectTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('order_device_defect');
+        Schema::dropIfExists('conditions');
     }
 }

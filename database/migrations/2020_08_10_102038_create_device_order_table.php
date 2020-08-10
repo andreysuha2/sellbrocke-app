@@ -18,7 +18,6 @@ class CreateDeviceOrderTable extends Migration
             $table->bigInteger("order_id");
             $table->bigInteger("device_id");
             $table->bigInteger("condition_id");
-            $table->timestamps();
         });
     }
 
