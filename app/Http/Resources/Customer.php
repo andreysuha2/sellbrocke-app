@@ -23,6 +23,7 @@ class Customer extends JsonResource
                 "merchant" => $this->merchant_customer_id
             ],
             "merchant" => new MerchantResource($this->merchant, false),
+            "email" => $this->email,
             "login" => $this->login,
             "firstName" => $this->first_name,
             "lastName" => $this->lastName
