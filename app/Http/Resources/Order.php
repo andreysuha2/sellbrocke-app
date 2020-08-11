@@ -17,7 +17,7 @@ class Order extends JsonResource
         return [
             "id" => $this->id,
             "status" => $this->status,
-            "devices" => new DeviceOrderCollection($this->devices),
+            "devices" => new OrderDevicesCollection($this->devices),
             "customer" => $this->customer
         ];
     }
