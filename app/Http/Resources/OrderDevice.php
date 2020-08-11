@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Condition as ConditionResource;
 
 class OrderDevice extends JsonResource
 {
@@ -33,7 +34,7 @@ class OrderDevice extends JsonResource
                 "base" => $this->device->base_price,
                 "discounted" => $this->getDiscounted()
             ],
-            "condition" => $this->condition,
+            "condition" => new ConditionResource($this->condition),
             "defects" => new DefectsCollection($this->defects),
             "productsGrids" => $this->when($this->device->use_products_grids, $productsGrids)
         ];
