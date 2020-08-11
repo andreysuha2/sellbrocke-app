@@ -19,7 +19,8 @@ class Order extends JsonResource
             "id" => $this->id,
             "status" => $this->status,
             "devices" => new OrderDevicesCollection($this->devices),
-            "customer" => new CustomerResource($this->customer)
+            "customer" => new CustomerResource($this->customer),
+            "prices" => $this->prices
         ];
     }
 }

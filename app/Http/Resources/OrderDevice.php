@@ -32,19 +32,11 @@ class OrderDevice extends JsonResource
             "description" => $this->device->description,
             "prices" => [
                 "base" => $this->device->base_price,
-                "discounted" => $this->getDiscounted()
+                "discounted" => $this->discounted_price
             ],
             "condition" => new ConditionResource($this->condition),
             "defects" => new DefectsCollection($this->defects),
             "productsGrids" => $this->when($this->device->use_products_grids, $productsGrids)
         ];
-    }
-
-    private function getDiscounted() {
-        $defectsPriceReduction = $this->defects->sum("price_reduction");
-        $discountedPercent = $this->device->company->price_reduction + $defectsPriceReduction + $this->condition->discount_percent;
-        $ratio = (100 - $discountedPercent) / 100;
-        $price = round($this->device->base_price * $ratio, 2);
-        return $price > 0 ? $price : 0;
     }
 }

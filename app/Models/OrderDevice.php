@@ -27,4 +27,12 @@ class OrderDevice extends Model
     public function products_grids() {
         return $this->belongsToMany("App\Models\ProductGrid", "order_device_product_grid", "order_device_id", "product_grid_id");
     }
+
+    public function getDiscountedPriceAttribute() {
+        $defectsPriceReduction = $this->defects->sum("price_reduction");
+        $discountedPercent = $this->device->company->price_reduction + $defectsPriceReduction + $this->condition->discount_percent;
+        $ratio = (100 - $discountedPercent) / 100;
+        $price = round($this->device->base_price * $ratio, 2);
+        return $price > 0 ? $price : 0;
+    }
 }
