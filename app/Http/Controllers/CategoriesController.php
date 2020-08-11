@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use App\Http\Requests\Category\CreateCategory as CreateCategoryRequest;
 use App\Http\Requests\Category\UpdateCategory as UpdateCategoryRequest;
 use App\Http\Resources\Category as CategoryResource;
-use Illuminate\Support\Str;
 
 class CategoriesController extends Controller
 {

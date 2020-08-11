@@ -17,7 +17,6 @@ class CreateOrdersTable extends Migration
             $table->id();
             $table->enum("status", [ "open", "closed", "canceled" ]);
             $table->bigInteger("customer_id");
-            $table->decimal("total_price", 20, 2);
             $table->timestamps();
         });
     }

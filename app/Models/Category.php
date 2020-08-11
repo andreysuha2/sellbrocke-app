@@ -5,7 +5,6 @@ namespace App\Models;
 use Bnb\Laravel\Attachments\HasAttachment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Log;
 use Kalnoy\Nestedset\NodeTrait;
 
 class Category extends Model

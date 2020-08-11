@@ -85,6 +85,11 @@ Route::group([ "prefix" => "admin" ], function () {
             });
         });
     });
+
+    Route::group([ "prefix" => "orders"], function() {
+        Route::get("", "OrdersController@getOrders");
+        Route::get("{order}", "OrdersController@getOrder");
+    });
 });
 
 Route::group([ "middleware" => "auth:api-merchants", 'prefix' => 'merchants', 'namespace' => "Merchants"], function () {
