@@ -21,7 +21,7 @@ class OrderDevice extends Model
     }
 
     public function defects() {
-        return $this->belongsToMany("App\Models\Defects", "order_device_defect", "order_device_id", "defect_id");
+        return $this->belongsToMany("App\Models\Defect", "order_device_defect", "order_device_id", "defect_id");
     }
 
     public function products_grids() {

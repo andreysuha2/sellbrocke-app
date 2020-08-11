@@ -15,7 +15,7 @@ class CreateOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->enum("status", [ "open", "closed", "canceled" ]);
+            $table->enum("status", [ "open", "closed", "canceled" ])->default("open");
             $table->bigInteger("customer_id");
             $table->timestamps();
         });
