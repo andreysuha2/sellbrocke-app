@@ -3,9 +3,9 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
-use App\Http\Resources\DeviceOrder as DeviceOrderResource;
+use App\Http\Resources\OrderDevice as OrderDeviceResource;
 
-class DeviceOrderCollection extends ResourceCollection
+class OrderDevicesCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -15,8 +15,8 @@ class DeviceOrderCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        return $this->collection->map(function ($device) {
-            return new DeviceOrderResource($device);
+        return $this->collection->map(function ($orderDevice) {
+            return new OrderDeviceResource($orderDevice);
         })->toArray();
     }
 }
