@@ -7,6 +7,7 @@ use App\Http\Resources\Customer as CustomerResource;
 
 class Order extends JsonResource
 {
+    public static $wrap = "order";
     /**
      * Transform the resource into an array.
      *
@@ -20,7 +21,8 @@ class Order extends JsonResource
             "status" => $this->status,
             "devices" => new OrderDevicesCollection($this->devices),
             "customer" => new CustomerResource($this->customer),
-            "prices" => $this->prices
+            "prices" => $this->prices,
+            "date" => $this->created_at
         ];
     }
 }

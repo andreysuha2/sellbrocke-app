@@ -7,6 +7,7 @@ use App\Http\Resources\Condition as ConditionResource;
 
 class ConditionCollection extends ResourceCollection
 {
+    public static $wrap = "conditions";
     /**
      * Transform the resource collection into an array.
      *

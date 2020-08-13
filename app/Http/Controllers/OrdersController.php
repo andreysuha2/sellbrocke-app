@@ -10,7 +10,7 @@ use App\Http\Resources\OrdersCollection;
 class OrdersController extends Controller
 {
     public function getOrders() {
-        $orders = Order::paginate(10);
+        $orders = Order::orderBy("id", "DESC")->paginate(10);
         return (new OrdersCollection($orders))->response()->getData(true);
     }
 

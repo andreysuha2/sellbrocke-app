@@ -7,6 +7,7 @@ use App\Http\Resources\Condition as ConditionResource;
 
 class OrderDevice extends JsonResource
 {
+    public static $wrap = "orderDevice";
     /**
      * Transform the resource into an array.
      *

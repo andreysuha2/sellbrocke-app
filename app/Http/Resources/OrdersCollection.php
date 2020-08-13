@@ -7,6 +7,7 @@ use App\Http\Resources\Order as OrderResource;
 
 class OrdersCollection extends ResourceCollection
 {
+    public static $wrap = "orders";
     /**
      * Transform the resource collection into an array.
      *

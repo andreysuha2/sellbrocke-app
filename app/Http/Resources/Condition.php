@@ -6,6 +6,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class Condition extends JsonResource
 {
+    public static $wrap = "condition";
     /**
      * Transform the resource into an array.
      *

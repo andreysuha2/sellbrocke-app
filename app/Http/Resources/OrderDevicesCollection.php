@@ -7,6 +7,7 @@ use App\Http\Resources\OrderDevice as OrderDeviceResource;
 
 class OrderDevicesCollection extends ResourceCollection
 {
+    public static $wrap = "orderDevices";
     /**
      * Transform the resource collection into an array.
      *
