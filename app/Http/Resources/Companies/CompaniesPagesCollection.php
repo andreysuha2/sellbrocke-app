@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Companies;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
-use App\Http\Resources\CategoryPage as CategoryPageResource;
+use App\Http\Resources\Companies\CompanyPage as CompanyPageResource;
 
-class CategoriesPageCollection extends ResourceCollection
+class CompaniesPagesCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -15,8 +15,8 @@ class CategoriesPageCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        return $this->collection->map(function ($category) {
-            return new CategoryPageResource($category);
+        return $this->collection->map(function ($companyPage) {
+            return new CompanyPageResource($companyPage);
         })->toArray();
     }
 }

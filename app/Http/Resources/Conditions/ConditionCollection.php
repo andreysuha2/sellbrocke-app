@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Conditions;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
-use App\Http\Resources\Condition as ConditionResource;
+use App\Http\Resources\Conditions\Condition as ConditionResource;
 
 class ConditionCollection extends ResourceCollection
 {

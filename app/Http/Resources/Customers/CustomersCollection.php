@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Customers;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
-use App\Http\Resources\Customer as CustomerResource;
+use App\Http\Resources\Customers\Customer as CustomerResource;
 
 class CustomersCollection extends ResourceCollection
 {

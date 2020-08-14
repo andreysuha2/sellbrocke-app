@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use Illuminate\Http\Request;
-use App\Http\Resources\Order as OrderResource;
-use App\Http\Resources\OrdersCollection;
+use App\Http\Resources\Orders\Order as OrderResource;
+use App\Http\Resources\Orders\OrdersCollection;
 
 class OrdersController extends Controller
 {

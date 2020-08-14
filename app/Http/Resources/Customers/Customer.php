@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Customers;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\Merchant as MerchantResource;
+use App\Http\Resources\Merchants\Merchant as MerchantResource;
 
 class Customer extends JsonResource
 {

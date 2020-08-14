@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Merchants\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Merchant;
 use Illuminate\Http\Request;
-use App\Http\Resources\MerchantsCollection;
+use App\Http\Resources\Merchants\MerchantsCollection;
 
 class MerchantController extends Controller
 {

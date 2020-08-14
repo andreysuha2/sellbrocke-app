@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Devices;
+use App\Http\Resources\ProductsGrids\ProductGrid as ProductGridResource;
 
+use App\Http\Resources\ProductsGrids\ProductGrid;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class DevicePage extends JsonResource
@@ -35,6 +37,8 @@ class DevicePage extends JsonResource
         $thumbnailPath = $thumbnailRecord ? $thumbnailRecord->url : null;
         if($this->withProductsGrids) {
             $name = $this->name . " " . $this->size->name . " (" . $this->carrier->name . ")";
+            $this->size = new ProductGridResource($this->size);
+            $this->carrier = new ProductGridResource($this->carrier);
         } else $name = $this->name;
 
         return [

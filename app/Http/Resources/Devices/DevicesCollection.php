@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Devices;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
-use App\Http\Resources\Defect as DefectResource;
+use App\Http\Resources\Devices\Device as DeviceResource;
 
-class DefectsCollection extends ResourceCollection
+class DevicesCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -13,12 +13,10 @@ class DefectsCollection extends ResourceCollection
      * @param  \Illuminate\Http\Request  $request
      * @return array
      */
-    public static $wrap = "defects";
-
     public function toArray($request)
     {
-        return $this->collection->map(function ($defect) {
-            return new DefectResource($defect);
+        return $this->collection->map(function ($device) {
+            return new DeviceResource($device);
         })->toArray();
     }
 }

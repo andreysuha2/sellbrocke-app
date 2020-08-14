@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\OrderDevices;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
-use App\Http\Resources\OrderDevice as OrderDeviceResource;
+use App\Http\Resources\OrderDevices\OrderDevice as OrderDeviceResource;
 
 class OrderDevicesCollection extends ResourceCollection
 {

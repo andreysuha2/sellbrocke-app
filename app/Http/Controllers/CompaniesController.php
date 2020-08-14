@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use Illuminate\Support\Facades\Gate;
-use App\Http\Resources\CompaniesCollection;
-use App\Http\Resources\Company as CompanyResource;
+use App\Http\Resources\Companies\CompaniesCollection;
+use App\Http\Resources\Companies\Company as CompanyResource;
 use App\Http\Requests\Company\StoreCompany as StoreCompanyRequest;
 use App\Http\Requests\Company\UpdateCompany as UpdateCompanyRequest;
 

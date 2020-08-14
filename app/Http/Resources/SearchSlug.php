@@ -2,11 +2,16 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\Defects\DefectsCollection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\CategoryPage as CategoryPageResource;
-use App\Http\Resources\CompanyPage as CompanyPageResource;
-use App\Http\Resources\DevicePage as DevicePageResource;
+use App\Http\Resources\Categories\CategoryPage as CategoryPageResource;
+use App\Http\Resources\Companies\CompanyPage as CompanyPageResource;
+use App\Http\Resources\Devices\DevicePage as DevicePageResource;
+use App\Http\Resources\Devices\DevicesPageCollection;
+use App\Http\Resources\Companies\CompaniesPagesCollection;
+use App\Http\Resources\Categories\CategoriesPageCollection;
+use App\Http\Resources\ProductsGrids\ProductGridCollection;
 
 class SearchSlug extends JsonResource
 {
@@ -107,7 +112,7 @@ class SearchSlug extends JsonResource
             $carrier = $item->use_products_grids ? $this->request->carrier: null;
             $result["item"] = new DevicePageResource($item, $size, $carrier);
             $result["pageListType"] = "defects";
-            $result["list"] = $item->defects()->get();
+            $result["list"] = new DefectsCollection($item->defects()->get());
         }
         return $result;
     }

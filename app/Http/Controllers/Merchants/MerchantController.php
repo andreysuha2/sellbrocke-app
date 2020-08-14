@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Merchants;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\CategoriesPageCollection;
+use App\Http\Resources\Categories\CategoriesPageCollection;
 use App\Models\Category;
 use App\Models\SearchSlug;
 use Illuminate\Http\Request;
-use App\Http\Resources\Merchant as MerchantResource;
+use App\Http\Resources\Merchants\Merchant as MerchantResource;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\SearchSlug as SearchSlugResource;
 

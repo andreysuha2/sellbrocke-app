@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Devices;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
-use App\Http\Resources\Order as OrderResource;
+use App\Http\Resources\Devices\DevicePage as DevicePageResource;
 
-class OrdersCollection extends ResourceCollection
+class DevicesPageCollection extends ResourceCollection
 {
-    public static $wrap = "orders";
     /**
      * Transform the resource collection into an array.
      *
@@ -16,8 +15,8 @@ class OrdersCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        return $this->collection->map(function ($order) {
-            return new OrderResource($order);
+        return $this->collection->map(function ($device) {
+            return new DevicePageResource($device);
         })->toArray();
     }
 }

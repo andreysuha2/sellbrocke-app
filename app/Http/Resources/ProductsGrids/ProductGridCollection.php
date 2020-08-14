@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\ProductsGrids;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
-use App\Http\Resources\ProductGrid as ProductGridResource;
+use App\Http\Resources\ProductsGrids\ProductGrid as ProductGridResource;
 
 class ProductGridCollection extends ResourceCollection
 {

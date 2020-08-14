@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Devices;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\Company as CompanyResource;
+use App\Http\Resources\Companies\Company as CompanyResource;
+use App\Http\Resources\Categories\CategoriesCollection;
+use App\Http\Resources\ProductsGrids\ProductGridCollection;
 
 class Device extends JsonResource
 {

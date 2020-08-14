@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\OrderDevices;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\Condition as ConditionResource;
+use App\Http\Resources\Conditions\Condition as ConditionResource;
+use App\Http\Resources\Defects\DefectsCollection;
+use App\Http\Resources\ProductsGrids\ProductGridCollection;
 
 class OrderDevice extends JsonResource
 {

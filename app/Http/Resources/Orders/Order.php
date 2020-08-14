@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Orders;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\Customer as CustomerResource;
+use App\Http\Resources\Customers\Customer as CustomerResource;
+use App\Http\Resources\OrderDevices\OrderDevicesCollection;
 
 class Order extends JsonResource
 {

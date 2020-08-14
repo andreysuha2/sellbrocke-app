@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\DefectsCollection;
+use App\Http\Resources\Defects\DefectsCollection;
 use App\Models\Defect;
 use Illuminate\Http\Request;
-use App\Http\Resources\Defect as DefectResource;
+use App\Http\Resources\Defects\Defect as DefectResource;
 use App\Http\Requests\Defect\StoreDefect as StoreDefectRequest;
 use App\Http\Requests\Defect\UpdateDefect as UpdateDefectRequest;
 

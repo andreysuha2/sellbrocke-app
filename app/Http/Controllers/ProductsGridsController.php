@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\ProductGridCollection;
+use App\Http\Resources\ProductsGrids\ProductGridCollection;
 use App\Models\ProductGrid;
 use Illuminate\Http\Request;
-use App\Http\Resources\ProductGrid as ProductGridResource;
+use App\Http\Resources\ProductsGrids\ProductGrid as ProductGridResource;
 use App\Http\Requests\ProductGrid\CreateProductGrid as CreateProductGridRequest;
 use App\Http\Requests\ProductGrid\UpdateProductGrid as UpdateProductGridRequest;
 

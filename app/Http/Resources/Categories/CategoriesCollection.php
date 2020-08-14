@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Categories;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
-use App\Http\Resources\Category as CategoryResource;
+use App\Http\Resources\Categories\Category as CategoryResource;
 
 class CategoriesCollection extends ResourceCollection
 {

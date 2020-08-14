@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Categories;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProductGrid extends JsonResource
+class CategoryPage extends JsonResource
 {
-    public static $wrap = "productGrid";
     /**
      * Transform the resource into an array.
      *
@@ -15,16 +14,15 @@ class ProductGrid extends JsonResource
      */
     public function toArray($request)
     {
-        $hasThumbnail = $this->type === "carrier";
-        $thumbnailRecord = $hasThumbnail ? $this->attachment("thumbnail") : null;
+        $thumbnailRecord = $this->attachment("thumbnail");
         $thumbnailPath = $thumbnailRecord ? $thumbnailRecord->url : null;
 
         return [
             "id" => $this->id,
-            "name" => $this->name,
             "slug" => $this->slug,
-            "type" => $this->type,
-            "thumbnail" => $this->when($hasThumbnail, $thumbnailPath)
+            "name" => $this->name,
+            "description" => $this->description,
+            "thumbnail" => $thumbnailPath
         ];
     }
 }

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Merchants;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\OrdersCollection;
+use App\Http\Resources\Orders\OrdersCollection;
 use Illuminate\Http\Request;
 use App\Models\Customer;
 use Illuminate\Support\Facades\Auth;

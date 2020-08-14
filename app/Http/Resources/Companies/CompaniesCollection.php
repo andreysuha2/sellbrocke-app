@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Companies;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
-use App\Http\Resources\Company as CompanyResource;
+use App\Http\Resources\Companies\Company as CompanyResource;
 
 class CompaniesCollection extends ResourceCollection
 {
