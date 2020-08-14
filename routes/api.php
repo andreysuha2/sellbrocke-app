@@ -103,4 +103,7 @@ Route::group([ "middleware" => "auth:api-merchants", 'prefix' => 'merchants', 'n
         Route::delete("", "CustomerController@delete");
     });
     Route::get("search/{query?}", "MerchantController@search")->where("query", "(.*)");
+    Route::group([ "prefix" => "orders" ], function () {
+        Route::get("{customer}", "OrdersController@getOrders");
+    });
 });

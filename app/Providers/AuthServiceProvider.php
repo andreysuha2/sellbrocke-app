@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Models\Company;
 use App\Models\Category;
+use App\Models\Customer;
+use App\Models\Merchant;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Passport\Passport;
@@ -35,6 +37,10 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::define("delete-company", function($user, Company $company) {
             return !$company->devices()->exists();
+        });
+
+        Gate::define("get-orders", function (Merchant $merchant, Customer $customer) {
+            return $merchant->customers->contains($customer);
         });
     }
 }
