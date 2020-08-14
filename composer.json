@@ -14,6 +14,7 @@
         "fideloper/proxy": "^4.2",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^6.3",
+        "jeremy-dunn/php-fedex-api-wrapper": "^3.0",
         "kalnoy/nestedset": "^5.0",
         "laravel/framework": "^7.0",
         "laravel/passport": "^9.2",
