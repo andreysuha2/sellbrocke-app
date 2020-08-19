@@ -124,8 +124,10 @@ class UPSController extends Controller
             ]
         ];
 
+        // TODO: Change for using order ID from the database
+        $orderId = '1000';
         $response = $this->UPSService->shipment($shipmentDetails);
-        $this->UPSService->storeShipment($response);
+        $this->UPSService->storeShipment($orderId, $response);
     }
 
     /**

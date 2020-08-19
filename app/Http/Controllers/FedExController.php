@@ -2,94 +2,66 @@
 
 namespace App\Http\Controllers;
 
-//use Illuminate\Http\Request;
-use FedEx\RateService\Request;
-use FedEx\RateService\ComplexType;
-use FedEx\RateService\SimpleType;
+use App\Services\FedExService;
 
 class FedExController extends Controller
 {
-    public function request() {
-        $rateRequest = new ComplexType\RateRequest();
+    public $fedEx;
 
-        //authentication & client details
-        $rateRequest->WebAuthenticationDetail->UserCredential->Key = getenv('FEDEX_KEY');
-        $rateRequest->WebAuthenticationDetail->UserCredential->Password = getenv('FEDEX_PASSWORD');
-        $rateRequest->ClientDetail->AccountNumber = getenv('FEDEX_ACCOUNT_NUMBER');
-        $rateRequest->ClientDetail->MeterNumber = getenv('FEDEX_METER_NUMBER');
+    public function __construct(FedExService $fedEx)
+    {
+        $this->fedEx = $fedEx;
+    }
 
-        $rateRequest->TransactionDetail->CustomerTransactionId = 'testing rate service request';
+    public function shipmentRequest()
+    {
+        $shipmentDetails = [
+            'version' => [
+                'major' => 23,
+                'intermediate' => 0,
+                'minor' => 0,
+                'service_id' => 'ship',
+            ],
+            'shipperAddress' => [
+                'line1' => 'Address Line 1',
+                'city' => 'Austin',
+                'state_code' => 'TX',
+                'postal_code' => '73301',
+                'country_code' => 'US'
+            ],
+            'shipperContact' => [
+                'company_name' => 'Company Name',
+                'email' => 'test@example.com',
+                'person_name' => 'Person Name',
+                'phone' => '123-123-1234',
+            ],
+            'recipientAddress' => [
+                'line1' => 'Address Line 1',
+                'city' => 'Herndon',
+                'state_code' => 'VA',
+                'postal_code' => '20171',
+                'country_code' => 'US'
+            ],
+            'recipientContact' => [
+                'person_name' => 'Person Name',
+                'phone' => '1234567890',
+            ],
+            'package' => [
+                'dimensions' => [
+                    'width' => 10,
+                    'height' => 20,
+                    'length' => 15
+                ],
+                'weight' => [
+                    'value' => 22,
+                    'units' => 'LB'
+                ]
+            ]
+        ];
 
-        //version
-        $rateRequest->Version->ServiceId = 'crs';
-        $rateRequest->Version->Major = 24;
-        $rateRequest->Version->Minor = 0;
-        $rateRequest->Version->Intermediate = 0;
-
-        $rateRequest->ReturnTransitAndCommit = true;
-
-        //shipper
-        $rateRequest->RequestedShipment->PreferredCurrency = 'USD';
-        $rateRequest->RequestedShipment->Shipper->Address->StreetLines = ['10 Fed Ex Pkwy'];
-        $rateRequest->RequestedShipment->Shipper->Address->City = 'Memphis';
-        $rateRequest->RequestedShipment->Shipper->Address->StateOrProvinceCode = 'TN';
-        $rateRequest->RequestedShipment->Shipper->Address->PostalCode = 38115;
-        $rateRequest->RequestedShipment->Shipper->Address->CountryCode = 'US';
-
-        //recipient
-        $rateRequest->RequestedShipment->Recipient->Address->StreetLines = ['13450 Farmcrest Ct'];
-        $rateRequest->RequestedShipment->Recipient->Address->City = 'Herndon';
-        $rateRequest->RequestedShipment->Recipient->Address->StateOrProvinceCode = 'VA';
-        $rateRequest->RequestedShipment->Recipient->Address->PostalCode = 20171;
-        $rateRequest->RequestedShipment->Recipient->Address->CountryCode = 'US';
-
-        //shipping charges payment
-        $rateRequest->RequestedShipment->ShippingChargesPayment->PaymentType = SimpleType\PaymentType::_SENDER;
-
-        //rate request types
-        $rateRequest->RequestedShipment->RateRequestTypes = [SimpleType\RateRequestType::_PREFERRED, SimpleType\RateRequestType::_LIST];
-
-        $rateRequest->RequestedShipment->PackageCount = 2;
-
-        //create package line items
-        $rateRequest->RequestedShipment->RequestedPackageLineItems = [new ComplexType\RequestedPackageLineItem(), new ComplexType\RequestedPackageLineItem()];
-
-        //package 1
-        $rateRequest->RequestedShipment->RequestedPackageLineItems[0]->Weight->Value = 2;
-        $rateRequest->RequestedShipment->RequestedPackageLineItems[0]->Weight->Units = SimpleType\WeightUnits::_LB;
-        $rateRequest->RequestedShipment->RequestedPackageLineItems[0]->Dimensions->Length = 10;
-        $rateRequest->RequestedShipment->RequestedPackageLineItems[0]->Dimensions->Width = 10;
-        $rateRequest->RequestedShipment->RequestedPackageLineItems[0]->Dimensions->Height = 3;
-        $rateRequest->RequestedShipment->RequestedPackageLineItems[0]->Dimensions->Units = SimpleType\LinearUnits::_IN;
-        $rateRequest->RequestedShipment->RequestedPackageLineItems[0]->GroupPackageCount = 1;
-
-        //package 2
-        $rateRequest->RequestedShipment->RequestedPackageLineItems[1]->Weight->Value = 5;
-        $rateRequest->RequestedShipment->RequestedPackageLineItems[1]->Weight->Units = SimpleType\WeightUnits::_LB;
-        $rateRequest->RequestedShipment->RequestedPackageLineItems[1]->Dimensions->Length = 20;
-        $rateRequest->RequestedShipment->RequestedPackageLineItems[1]->Dimensions->Width = 20;
-        $rateRequest->RequestedShipment->RequestedPackageLineItems[1]->Dimensions->Height = 10;
-        $rateRequest->RequestedShipment->RequestedPackageLineItems[1]->Dimensions->Units = SimpleType\LinearUnits::_IN;
-        $rateRequest->RequestedShipment->RequestedPackageLineItems[1]->GroupPackageCount = 1;
-
-        $rateServiceRequest = new Request();
-        //$rateServiceRequest->getSoapClient()->__setLocation(Request::PRODUCTION_URL); //use production URL
-
-        $rateReply = $rateServiceRequest->getGetRatesReply($rateRequest); // send true as the 2nd argument to return the SoapClient's stdClass response.
-
-
-        if (!empty($rateReply->RateReplyDetails)) {
-            foreach ($rateReply->RateReplyDetails as $rateReplyDetail) {
-                var_dump($rateReplyDetail->ServiceType);
-                if (!empty($rateReplyDetail->RatedShipmentDetails)) {
-                    foreach ($rateReplyDetail->RatedShipmentDetails as $ratedShipmentDetail) {
-                        var_dump($ratedShipmentDetail->ShipmentRateDetail->RateType . ": " . $ratedShipmentDetail->ShipmentRateDetail->TotalNetCharge->Amount);
-                    }
-                }
-                echo "<hr />";
-            }
-        }
-
-        dd($rateReply);
+        // TODO: Change for using order ID from the database
+        $orderId = '1000';
+        $result = $this->fedEx->shipment($shipmentDetails);
+        $this->fedEx->storeShipment($orderId, $result);
     }
 }

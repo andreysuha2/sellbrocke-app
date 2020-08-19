@@ -17,7 +17,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/fedex', 'FedExController@request');
+Route::get('/fedex', 'FedExController@shipmentRequest');
 Route::get('/ups', 'UPSController@shipmentRequest');
 Route::get('/ups/label/{trackingNumber}', 'UPSController@labelRecovery');
 Route::get('/ups/cancel/{shipmentIdentificationNumber}', 'UPSController@shipmentCancel');

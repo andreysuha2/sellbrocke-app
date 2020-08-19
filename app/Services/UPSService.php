@@ -102,14 +102,14 @@ class UPSService implements UPSInterface
         return $this->request($url, $shipmentDetails);
     }
 
-    public function storeShipment($shipmentResponse)
+    public function storeShipment($orderId, $shipmentResponse)
     {
         if ($shipmentResponse && $shipmentResponse['ShipmentResponse']['Response']['ResponseStatus']['Code'] == 1) {
 
             $shipmentResults = $shipmentResponse['ShipmentResponse']['ShipmentResults'];
 
             $shipment = new UPSShipment();
-            $shipment->order_id = '1000';
+            $shipment->order_id = $orderId;
             $shipment->shipment_identification_number = $shipmentResults['ShipmentIdentificationNumber'];
             $shipment->package_count = count($shipmentResults['PackageResults']);
             $shipment->weight = $shipmentResults['BillingWeight']['Weight'];
@@ -125,6 +125,7 @@ class UPSService implements UPSInterface
                     $package = new UPSPackage();
                     $package->shipment_id = $shipment->id;
                     $package->tracking_number = $packageDetails['TrackingNumber'];
+                    $package->label = $packageDetails['ShippingLabel']['GraphicImage'];
                     $package->save();
                 }
             }

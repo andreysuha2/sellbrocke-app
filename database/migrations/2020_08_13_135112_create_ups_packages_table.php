@@ -17,6 +17,7 @@ class CreateUpsPackagesTable extends Migration
             $table->id();
             $table->bigInteger('shipment_id');
             $table->string('tracking_number', 32);
+            $table->text('label');
             $table->timestamps();
         });
     }
