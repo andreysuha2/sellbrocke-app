@@ -14,6 +14,14 @@ class OrdersPageCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return $this->collection->map(function ($order) {
+            return [
+                "id" => $order->id,
+                "status" => $order->status,
+                "devicesCount" => $order->devices()->count(),
+                "prices" => $order->prices,
+                "date" => $order->created_at
+            ];
+        })->toArray();
     }
 }

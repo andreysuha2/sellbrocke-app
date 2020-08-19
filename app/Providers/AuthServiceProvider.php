@@ -6,6 +6,7 @@ use App\Models\Company;
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Merchant;
+use App\Models\Order;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Passport\Passport;
@@ -40,6 +41,15 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define("get-orders", function (Merchant $merchant, Customer $customer) {
+            return $merchant->customers->contains($customer);
+        });
+
+        Gate::define("get-order", function (Merchant $merchant, Customer $customer, Order $order) {
+            $isAuthCustomer = $merchant->customers->contains($customer);
+            return $isAuthCustomer ? $customer->orders->contains($order) : false;
+        });
+
+        Gate::define("create-order", function (Merchant $merchant, Customer $customer) {
             return $merchant->customers->contains($customer);
         });
     }
