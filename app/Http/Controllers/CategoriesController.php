@@ -3,14 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Gate;
-use App\Http\Resources\CategoriesCollection;
+use App\Http\Resources\Categories\CategoriesCollection;
 use App\Models\Defect;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Requests\Category\CreateCategory as CreateCategoryRequest;
 use App\Http\Requests\Category\UpdateCategory as UpdateCategoryRequest;
-use App\Http\Resources\Category as CategoryResource;
-use Illuminate\Support\Str;
+use App\Http\Resources\Categories\Category as CategoryResource;
 
 class CategoriesController extends Controller
 {

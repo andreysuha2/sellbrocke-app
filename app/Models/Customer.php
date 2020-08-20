@@ -14,4 +14,8 @@ class Customer extends Model
     public function merchant() {
         return $this->belongsTo("App\Models\Merchant", "merchant_id");
     }
+
+    public function orders() {
+        return $this->hasMany("App\Models\Order", "customer_id");
+    }
 }

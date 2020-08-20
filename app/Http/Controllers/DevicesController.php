@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\DevicesCollection;
+use App\Http\Resources\Devices\DevicesCollection;
 use App\Models\Category;
 use App\Models\Device;
 use App\Models\ProductGrid;
 use Illuminate\Http\Request;
 use App\Http\Requests\Device\CreateDevice as CreateDeviceRequest;
-use App\Http\Resources\Device as DeviceResource;
+use App\Http\Resources\Devices\Device as DeviceResource;
 use App\Http\Requests\Device\UpdateDevice as UpdateDeviceRequest;
 use App\Models\Company;
 

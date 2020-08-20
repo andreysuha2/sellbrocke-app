@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
@@ -30,9 +31,13 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
-
         parent::boot();
+        Route::bind("merchant_customer", function ($id) {
+            return Auth::guard("api-merchants")->user()
+                    ->customers()
+                    ->where("merchant_customer_id", $id)
+                    ->firstOrFail();
+        });
     }
 
     /**

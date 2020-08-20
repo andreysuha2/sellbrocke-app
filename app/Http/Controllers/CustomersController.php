@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use Illuminate\Http\Request;
-use App\Http\Resources\CustomersCollection;
+use App\Http\Resources\Customers\CustomersCollection;
 
 class CustomersController extends Controller
 {
