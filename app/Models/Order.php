@@ -16,6 +16,10 @@ class Order extends Model
         return $this->hasMany("App\Models\OrderDevice", "order_id");
     }
 
+    public function log() {
+        return $this->hasMany("App\Models\OrderLog", "order_id");
+    }
+
     public function getPricesAttribute() {
         $base = $this->devices->sum(function ($orderDevice) {
             return $orderDevice->device->base_price;
