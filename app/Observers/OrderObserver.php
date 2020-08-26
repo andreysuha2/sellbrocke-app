@@ -13,7 +13,7 @@ class OrderObserver
     public function updated(Order $order) {
         if($order->status !== $order->getOriginal("status")) {
             $oldStatus = $order->getOriginal("status");
-            $order->log()->create([ "message" => "Status change: '$order->status' -> '$oldStatus'" ]);
+            $order->log()->create([ "message" => "Status change: '$oldStatus' -> '$order->status'" ]);
         }
     }
 }
