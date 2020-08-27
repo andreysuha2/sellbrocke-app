@@ -81,12 +81,12 @@ class FedExService
         $packageLineItem1
             ->setSequenceNumber(1)
             ->setItemDescription('Apple McBook Air')
-            ->setDimensions(new ComplexType\Dimensions(array(
-                'Width' => $shipmentDetails['package']['dimensions']['width'],
-                'Height' => $shipmentDetails['package']['dimensions']['height'],
-                'Length' => $shipmentDetails['package']['dimensions']['length'],
-                'Units' => SimpleType\LinearUnits::_IN
-            )))
+//            ->setDimensions(new ComplexType\Dimensions(array(
+//                'Width' => $shipmentDetails['package']['dimensions']['width'],
+//                'Height' => $shipmentDetails['package']['dimensions']['height'],
+//                'Length' => $shipmentDetails['package']['dimensions']['length'],
+//                'Units' => SimpleType\LinearUnits::_IN
+//            )))
             ->setWeight(new ComplexType\Weight(array(
                 'Value' => $shipmentDetails['package']['weight']['value'],
                 'Units' => SimpleType\WeightUnits::_LB
@@ -122,7 +122,7 @@ class FedExService
         $processShipmentRequest->setRequestedShipment($requestedShipment);
 
         $shipService = new ShipService\Request();
-        return $shipService->getProcessShipmentReply($processShipmentRequest);
+        return $shipService->getProcessShipmentReply($processShipmentRequest)->toArray();
     }
 
     public function storeShipment($orderId, $shipmentResponse)

@@ -25,7 +25,37 @@ class CreateOrder extends FormRequest
      */
     public function rules()
     {
-        return [
+        $upsRules = [
+            "shipment.shipFrom.Name" => "required",
+            "shipment.shipFrom.AttentionName" => "required",
+            "shipment.shipFrom.Phone.Number" => "required",
+            "shipment.shipFrom.Address.AddressLine" => "required",
+            "shipment.shipFrom.Address.City" => "required",
+            "shipment.shipFrom.Address.StateProvinceCode" => "required",
+            "shipment.shipFrom.Address.PostalCode" => "required",
+            "shipment.shipFrom.Address.CountryCode" => "required",
+            "shipment.service.Code" => "required",
+            "shipment.package.Packaging.Code" => "required",
+            "shipment.package.PackageWeight.UnitOfMeasurement.Code" => "required",
+            "shipment.package.PackageWeight.Weight" => "required|numeric"
+        ];
+
+        $fedexRules = [
+            "shipment.shipperAddress.line1" => "required",
+            "shipment.shipperAddress.city" => "required",
+            "shipment.shipperAddress.state_code" => "required",
+            "shipment.shipperAddress.postal_code" => "required",
+            "shipment.shipperAddress.country_code" => "required",
+            "shipment.shipperContact.company_name" => "required",
+            "shipment.shipperContact.email" => "required",
+            "shipment.shipperContact.person_name" => "required",
+            "shipment.shipperContact.phone" => "required",
+            "shipment.weight" => "required"
+        ];
+
+        $shipmentRules = $this->shipment["type"] === "UPS" ? $upsRules : $fedexRules;
+
+        return array_merge([
             "devices" => "array|required",
             "devices.*.id" => "required|numeric|exists:devices,id",
             "devices.*.defects" => "array",
@@ -37,8 +67,9 @@ class CreateOrder extends FormRequest
                     $this->checkProductsGrid($device, $value, $fail, $attribute);
                     $this->checkDefects($device, $value, $fail, $attribute);
                 }
-            } ]
-        ];
+            } ],
+            "shipment.type" => "in:FEDEX,UPS"
+        ],  $shipmentRules);
     }
 
     private function checkProductsGrid($device, $input, $fail, $attribute) {

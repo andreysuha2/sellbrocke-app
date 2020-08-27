@@ -45,7 +45,7 @@ class UPSService implements UPSInterface
             json_encode($shipmentDetails),
             'application/json'
         )->post($url);
-
+        
         if ($response->serverError()) {
             throw new Exception('Error: 500 Internal Server Error');
         }

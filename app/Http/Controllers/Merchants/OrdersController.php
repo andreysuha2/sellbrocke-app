@@ -7,6 +7,8 @@ use App\Http\Resources\Orders\OrdersPageCollection;
 use App\Models\Condition;
 use App\Models\Device;
 use App\Models\OrderDevice;
+use App\Services\FedExService;
+use App\Services\UPSService;
 use Illuminate\Http\Request;
 use App\Models\Customer;
 use Illuminate\Support\Facades\Auth;
@@ -14,6 +16,7 @@ use Illuminate\Support\Facades\Gate;
 use App\Models\Order;
 use App\Http\Resources\Orders\Order as OrderResource;
 use App\Http\Requests\Order\CreateOrder as CreateOrderRequest;
+use GuzzleHttp\Client;
 
 class OrdersController extends Controller
 {
@@ -30,6 +33,7 @@ class OrdersController extends Controller
     public function createOrder(Customer $customer, CreateOrderRequest $request) {
         Gate::forUser(Auth::guard("api-merchants")->user())->authorize("create-order", $customer);
         $order = $customer->orders()->create([ "status" => "open" ]);
+        $shipping = $this->createShipment($request);
         collect($request->devices)->each(function ($deviceData) use ($order) {
             $orderDevice = new OrderDevice();
             $device = Device::find($deviceData["id"]);
@@ -43,6 +47,100 @@ class OrdersController extends Controller
                 $orderDevice->products_grids()->attach($deviceData["productsGrids"]);
             }
         });
-        return new OrderResource($order);
+        return response()->json([ "order" => new OrderResource($order), "shipping" => $shipping ]);
+    }
+
+    private function createShipment(Request $request) {
+        if($request->shipment["type"] === "UPS") {
+            $shipping = new UPSService(new Client());
+            $query = [
+                "ShipmentRequest" => [
+                    "Shipment" => [
+                        "Description" => $request->shipment["description"] ?? "test",
+                        "Shipper" => [
+                            "Name" => "Sellbroke",
+                            "AttentionName" => "Sellbroke",
+                            "Phone" => [
+                                "Number" => "1234567890"
+                            ],
+                            "ShipperNumber" => env("UPS_SHIPPER_NUMBER"),
+                            "Address" => [
+                                "AddressLine" => "Saks Fifth Avenue‎",
+                                "City" => "New York",
+                                "StateProvinceCode" => "NY",
+                                "PostalCode" => "10001",
+                                "CountryCode" => "US"
+                            ]
+                        ],
+                        "ShipTo" => [
+                            "Name" => "ShipToName",
+                            "AttentionName" => "AttentionName",
+                            "Phone" => [
+                                "Number" => "1234567890"
+                            ],
+                            "FaxNumber" => "1234567999",
+                            "Address" => [
+                                "AddressLine" => "Sixth Avenue",
+                                "City" => "New York",
+                                "StateProvinceCode" => "NY",
+                                "PostalCode" => "10001",
+                                "CountryCode" => "US"
+                            ]
+                        ],
+                        "ShipFrom" => $request->shipment["shipFrom"],
+                        "PaymentInformation" => [
+                            "ShipmentCharge" => [
+                                "Type" => "01",
+                                "BillShipper" => [
+                                    "AccountNumber" => env("UPS_SHIPPER_NUMBER")
+                                ]
+                            ]
+                        ],
+                        "Service" => $request->shipment["service"],
+                        "Package" => [ $request->shipment["package"] ],
+                    ],
+                    "LabelSpecification" => [
+                        "LabelImageFormat" => [
+                            "Code" => "GIF"
+                        ]
+                    ]
+                ]
+            ];
+            $shippingResponse = $shipping->shipment($query);
+        } else if($request->shipment["type"] === "FEDEX") {
+            $shipping = new FedExService();
+            $query = [
+                'version' => [
+                    'major' => 23,
+                    'intermediate' => 0,
+                    'minor' => 0,
+                    'service_id' => 'ship',
+                ],
+                'shipperAddress' => $request->shipment["shipperAddress"],
+                'shipperContact' => $request->shipment["shipperContact"],
+                'recipientAddress' => [
+                    'line1' => 'Address Line 1',
+                    'city' => 'Herndon',
+                    'state_code' => 'VA',
+                    'postal_code' => '20171',
+                    'country_code' => 'US'
+                ],
+                'recipientContact' => [
+                    'person_name' => 'Person Name',
+                    'phone' => '1234567890',
+                ],
+                'package' => [
+                    'weight' => [
+                        'value' => $request->shipment["weight"],
+                        'units' => 'LB'
+                    ]
+                ]
+            ];
+            $shippingResponse = $shipping->shipment($query);
+        } else {
+            return abort("404");
+        }
+
+        return $shipping->shipment($query);
     }
 }
