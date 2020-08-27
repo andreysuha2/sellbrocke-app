@@ -4,7 +4,7 @@ namespace Deployer;
 require 'recipe/laravel.php';
 
 // Project name
-set('application', 'my_project');
+set('application', 'Sellbroke');
 
 // Project repository
 set('repository', 'https://github.com/andreysuha2/sellbrocke-app.git');
@@ -38,9 +38,9 @@ host('development')
     
 // Tasks
 
-task('build', function () {
+/*task('build', function () {
     run('cd {{release_path}} && build');
-});
+});*/
 
 // [Optional] if deploy fails automatically unlock.
 after('deploy:failed', 'deploy:unlock');

@@ -13,10 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    echo phpinfo();
-});
-
 Route::get('/fedex', 'FedExController@shipmentRequest');
 Route::get('/ups', 'UPSController@shipmentRequest');
 Route::get('/ups/label/{trackingNumber}', 'UPSController@labelRecovery');
