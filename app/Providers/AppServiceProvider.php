@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Schema;
 use App\Console\Commands\ModelMakeCommand;
 use App\Models\Category;
 use App\Models\Company;
@@ -40,6 +41,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Schema::defaultStringLength(191);
+
         Category::observe(CategoryObserver::class);
         Device::observe(DeviceObserver::class);
         Defect::observe(DefectObserver::class);

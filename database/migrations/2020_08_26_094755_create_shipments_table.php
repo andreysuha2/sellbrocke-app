@@ -23,7 +23,6 @@ class CreateShipmentsTable extends Migration
             $table->decimal("total_charges", 8, 2);
             $table->string("currency_code", 3);
             $table->string("status");
-            $table->json("data");
             $table->timestamps();
         });
     }

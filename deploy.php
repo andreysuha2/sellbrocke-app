@@ -4,7 +4,7 @@ namespace Deployer;
 require 'recipe/laravel.php';
 
 // Project name
-set('application', 'my_project');
+set('application', 'Sellbroke');
 
 // Project repository
 set('repository', 'https://github.com/andreysuha2/sellbrocke-app.git');
@@ -33,14 +33,31 @@ host('development')
     ->multiplexing(true)
     ->addSshOption('UserKnownHostsFile', '~/.ssh/known_hosts')
     ->addSshOption('StrictHostKeyChecking', 'no')
-    ->set("composer_options", "install")
+    ->set("composer_options", "install --optimize-autoloader --no-dev")
     ->set('deploy_path', '/var/www/test19/data/www/test19.f5-cloud.top');
     
 // Tasks
 
-task('build', function () {
+/*task('build', function () {
     run('cd {{release_path}} && build');
-});
+});*/
+
+desc('Deploy your project');
+task('deploy', [
+    'deploy:info',
+    'deploy:prepare',
+    'deploy:lock',
+    'deploy:release',
+    'deploy:update_code',
+    'deploy:shared',
+    'deploy:writable',
+    'deploy:vendors',
+    'deploy:clear_paths',
+    'deploy:symlink',
+    'deploy:unlock',
+    'cleanup',
+    'success'
+]);
 
 // [Optional] if deploy fails automatically unlock.
 after('deploy:failed', 'deploy:unlock');

@@ -9,7 +9,7 @@ class Customer extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = [ "merchant_customer_id", "email", "login", "first_name", "last_name", "data" ];
+    protected $fillable = [ "merchant_customer_id", "email", "login", "first_name", "last_name" ];
 
     public function merchant() {
         return $this->belongsTo("App\Models\Merchant", "merchant_id");

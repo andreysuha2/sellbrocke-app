@@ -21,7 +21,6 @@ class CreateCustomersTable extends Migration
             $table->string("login");
             $table->string("first_name")->nullable();
             $table->string("last_name")->nullable();
-            $table->json("data")->nullable();
             $table->softDeletes();
             $table->timestamps();
             $table->unique(["merchant_id", "merchant_customer_id", "email"]);
