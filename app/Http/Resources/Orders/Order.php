@@ -5,6 +5,7 @@ namespace App\Http\Resources\Orders;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\Customers\Customer as CustomerResource;
 use App\Http\Resources\OrderDevices\OrderDevicesCollection;
+use App\Http\Resources\Orders\OrderShipment as OrderShipmentResource;
 
 class Order extends JsonResource
 {
@@ -24,7 +25,8 @@ class Order extends JsonResource
             "customer" => new CustomerResource($this->customer),
             "prices" => $this->prices,
             "date" => $this->created_at,
-            "log" => new OrderLogCollection($this->log)
+            "log" => new OrderLogCollection($this->log),
+            "shipment" => new OrderShipmentResource($this->shipment)
         ];
     }
 }

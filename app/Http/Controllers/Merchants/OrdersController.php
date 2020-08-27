@@ -33,7 +33,10 @@ class OrdersController extends Controller
     public function createOrder(Customer $customer, CreateOrderRequest $request) {
         Gate::forUser(Auth::guard("api-merchants")->user())->authorize("create-order", $customer);
         $order = $customer->orders()->create([ "status" => "open" ]);
-        $shipping = $this->createShipment($request);
+        $shippingData = $this->createShipment($request);
+        return $shippingData;
+        $shipping = $order->shipment()->create($shippingData);
+        $shipping->storeLabel($shippingData["label"]);
         collect($request->devices)->each(function ($deviceData) use ($order) {
             $orderDevice = new OrderDevice();
             $device = Device::find($deviceData["id"]);
@@ -47,7 +50,7 @@ class OrdersController extends Controller
                 $orderDevice->products_grids()->attach($deviceData["productsGrids"]);
             }
         });
-        return response()->json([ "order" => new OrderResource($order), "shipping" => $shipping ]);
+        return new OrderResource($order);
     }
 
     private function createShipment(Request $request) {
@@ -106,7 +109,19 @@ class OrdersController extends Controller
                     ]
                 ]
             ];
-            $shippingResponse = $shipping->shipment($query);
+            $shippingResponse = $shipping->shipment($query)["ShipmentResponse"];
+            $shippingLabel = $shippingResponse["ShipmentResults"]["PackageResults"]["ShippingLabel"]["GraphicImage"];
+            $shippingData = [
+                "type" => "UPS",
+                "tracking_number" => $shippingResponse["ShipmentResults"]["ShipmentIdentificationNumber"],
+                "weight" => $shippingResponse["ShipmentResults"]["BillingWeight"]["Weight"],
+                "weight_code" => $shippingResponse["ShipmentResults"]["BillingWeight"]["UnitOfMeasurement"]["Code"],
+                "total_charges" => $shippingResponse["ShipmentResults"]["ShipmentCharges"]["TotalCharges"]["MonetaryValue"],
+                "currency_code" => $shippingResponse["ShipmentResults"]["ShipmentCharges"]["TotalCharges"]["CurrencyCode"],
+                "status" => "created",
+                "data" => json_encode([]),
+                "label" => $shippingLabel
+            ];
         } else if($request->shipment["type"] === "FEDEX") {
             $shipping = new FedExService();
             $query = [
@@ -137,10 +152,14 @@ class OrdersController extends Controller
                 ]
             ];
             $shippingResponse = $shipping->shipment($query);
+            $shippingData = [
+                "type" => "FEDEX",
+                "tracking_number" => $shippingResponse
+            ];
         } else {
             return abort("404");
         }
 
-        return $shipping->shipment($query);
+        return $shippingData;
     }
 }
