@@ -6,7 +6,6 @@ use FedEx\ShipService;
 use FedEx\ShipService\Request;
 use FedEx\ShipService\ComplexType;
 use FedEx\ShipService\SimpleType;
-use App\Models\FedExShipment;
 
 class FedExService
 {
@@ -123,36 +122,5 @@ class FedExService
 
         $shipService = new ShipService\Request();
         return $shipService->getProcessShipmentReply($processShipmentRequest)->toArray();
-    }
-
-    public function storeShipment($orderId, $shipmentResponse)
-    {
-        if ($shipmentResponse->HighestSeverity !== 'SUCCESS') {
-            return null;
-        }
-
-        if ($shipmentResponse->CompletedShipmentDetail->CompletedPackageDetails
-            && count($shipmentResponse->CompletedShipmentDetail->CompletedPackageDetails) > 0) {
-            $shipmentPackageDetails = $shipmentResponse->CompletedShipmentDetail->CompletedPackageDetails[0];
-
-            if ($shipmentPackageDetails->PackageRating->PackageRateDetails
-                && count($shipmentPackageDetails->PackageRating->PackageRateDetails) > 0) {
-                $packageDetails = $shipmentPackageDetails->PackageRating->PackageRateDetails[0];
-
-                $fedExShipment = new FedExShipment();
-                $fedExShipment->order_id = $orderId;
-                $fedExShipment->job_id = $shipmentResponse->JobId;
-                $fedExShipment->tracking_type = $shipmentResponse->CompletedShipmentDetail->MasterTrackingId->TrackingIdType;
-                $fedExShipment->tracking_number = $shipmentResponse->CompletedShipmentDetail->MasterTrackingId->TrackingNumber;
-                $fedExShipment->weight = $packageDetails->BillingWeight->Value;
-                $fedExShipment->weight_code = $packageDetails->BillingWeight->Units;
-                $fedExShipment->currency_code = $packageDetails->NetCharge->Currency;
-                $fedExShipment->total_charges = $packageDetails->NetCharge->Amount;
-                $fedExShipment->status = 'Delivery';
-                $fedExShipment->label = $shipmentResponse->CompletedShipmentDetail->CompletedPackageDetails[0]->Label->Parts[0]->Image;
-                $fedExShipment->save();
-            }
-
-        }
     }
 }

@@ -5,10 +5,7 @@ namespace App\Services;
 use App\Interfaces\UPSInterface;
 use Illuminate\Support\Facades\Http;
 use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Storage;
 use League\Flysystem\Exception;
-use App\Models\UPSPackage;
-use App\Models\UPSShipment;
 
 
 class UPSService implements UPSInterface
@@ -132,39 +129,4 @@ class UPSService implements UPSInterface
         }
     }
 
-    public function storeShipmentCancel($shipmentIdentificationNumber, $shipmentCancelResponse)
-    {
-        if (empty($shipmentIdentificationNumber) || empty($shipmentCancelResponse)) {
-            return null;
-        }
-
-        if ($shipmentCancelResponse['VoidShipmentResponse']['Response']['ResponseStatus']['Code'] == 1
-            && $shipmentCancelResponse['VoidShipmentResponse']['SummaryResult']['Status']['Code'] == 1) {
-
-            $shipment = UPSShipment::where('shipment_identification_number', '=', $shipmentIdentificationNumber)->first();
-
-            $shipment->status = $shipmentCancelResponse['VoidShipmentResponse']['SummaryResult']['Status']['Description'];
-            $shipment->save();
-        }
-    }
-
-    /**
-     * The method gets shipment label and return label image file URL
-     *
-     * @param array $shipmentLabelResponse
-     * @return string Label image file URL
-     */
-    public function storeShipmentLabel($shipmentLabelResponse)
-    {
-        if ($shipmentLabelResponse
-            && $shipmentLabelResponse['LabelRecoveryResponse']['Response']['ResponseStatus']['Code'] == 1) {
-
-            $fileName = "label-{$shipmentLabelResponse['LabelRecoveryResponse']['ShipmentIdentificationNumber']}.gif";
-            $imageData = $shipmentLabelResponse['LabelRecoveryResponse']['LabelResults']['LabelImage']['GraphicImage'];
-            $imageData = str_replace(' ', '+', $imageData);
-            Storage::disk('local')->put("public/{$fileName}", base64_decode($imageData));
-
-            return asset("storage/{$fileName}");
-        }
-    }
 }
