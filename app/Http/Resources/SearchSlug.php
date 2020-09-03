@@ -2,7 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\Conditions\ConditionCollection;
 use App\Http\Resources\Defects\DefectsCollection;
+use App\Models\Condition;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\Categories\CategoryPage as CategoryPageResource;
@@ -44,7 +46,8 @@ class SearchSlug extends JsonResource
             "item" => $pageData["item"],
             "list" => $this->when(isset($pageData["list"]), $pageData["list"] ?? null),
             "listType" => $this->when(isset($pageData["pageListType"]), $pageData["pageListType"] ?? null),
-            "redirectTo" => $this->when(isset($pageData["redirectTo"]), $pageData["redirectTo"] ?? null)
+            "redirectTo" => $this->when(isset($pageData["redirectTo"]), $pageData["redirectTo"] ?? null),
+            "conditions" => $this->when(isset($pageData["conditions"]), $pageData["conditions"] ?? null)
          ];
     }
 
@@ -113,6 +116,7 @@ class SearchSlug extends JsonResource
             $result["item"] = new DevicePageResource($item, $size, $carrier);
             $result["pageListType"] = "defects";
             $result["list"] = new DefectsCollection($item->defects()->get());
+            $result["conditions"] = new ConditionCollection(Condition::all());
         }
         return $result;
     }
