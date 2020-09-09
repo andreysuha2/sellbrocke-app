@@ -14,14 +14,20 @@ use App\Http\Resources\Devices\DevicesPageCollection;
 use App\Http\Resources\Companies\CompaniesPagesCollection;
 use App\Http\Resources\Categories\CategoriesPageCollection;
 use App\Http\Resources\ProductsGrids\ProductGridCollection;
+use Illuminate\Pagination\Paginator;
 
 class SearchSlug extends JsonResource
 {
     private $request;
+    private $pageParamName = "p";
+    private $perPageCount = 10;
 
     public function __construct($resource, Request $request) {
         parent::__construct($resource);
         $this->request = $request;
+        Paginator::currentPageResolver(function () use ($request) {
+            return $request->has("p") ? $request->p : 1;
+        });
     }
 
     /**
@@ -45,6 +51,9 @@ class SearchSlug extends JsonResource
             "type" => $this->type,
             "item" => $pageData["item"],
             "list" => $this->when(isset($pageData["list"]), $pageData["list"] ?? null),
+            "paginator" => $this->when(isset($pageData["paginator"]), array_merge([
+                "parameter_name" => $this->pageParamName
+            ], $pageData["paginator"])),
             "listType" => $this->when(isset($pageData["pageListType"]), $pageData["pageListType"] ?? null),
             "redirectTo" => $this->when(isset($pageData["redirectTo"]), $pageData["redirectTo"] ?? null),
             "conditions" => $this->when(isset($pageData["conditions"]), $pageData["conditions"] ?? null)
@@ -72,9 +81,13 @@ class SearchSlug extends JsonResource
         $result = [];
         $result["item"] = new CategoryPageResource($item);
         if($item->isLeaf()) {
-            $companies = $item->companies()->get();
+            $companies = $item->companies()
+                              ->paginate($this->perPageCount)
+                              ->setPageName($this->pageParamName);
             if($companies->count() > 1) {
-                $result["list"] = new CompaniesPagesCollection($companies);
+                $companiesPaginate = (new CompaniesPagesCollection($companies))->response()->getData(true);
+                $result["list"] = $companiesPaginate["data"];
+                $result["paginator"] = $companiesPaginate["meta"];
                 $result["pageListType"] = "companies";
             } elseif($companies->count() === 1) {
                 $result["pageListType"] = "devices";
@@ -82,7 +95,13 @@ class SearchSlug extends JsonResource
             }
         } else {
             $result["pageListType"] = "categories";
-            $result["list"] = new CategoriesPageCollection($item->children);
+            $categories = (new CategoriesPageCollection(
+                                    $item->children()
+                                        ->paginate($this->perPageCount)
+                                        ->setPageName($this->pageParamName)
+                              ))->response()->getData(true);
+            $result["list"] = $categories["data"];
+            $result["paginator"] = $categories["meta"];
         }
         return $result;
     }
@@ -94,8 +113,11 @@ class SearchSlug extends JsonResource
         $result["pageListType"] = "devices";
         $devices = $item->devices()->whereHas("categories", function ($query) use ($searchCategory) {
             $query->where("categories.id", $searchCategory->search_id);
-        })->get();
-        $result["list"] = new DevicesPageCollection($devices);
+        })->paginate($this->perPageCount)
+          ->setPageName($this->pageParamName);
+        $devicesData = (new DevicesPageCollection($devices))->response()->getData(true);
+        $result["list"] = $devicesData["data"];
+        $result["paginator"] = $devicesData["meta"];
         return $result;
     }
 
