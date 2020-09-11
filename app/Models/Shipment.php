@@ -20,8 +20,13 @@ class Shipment extends Model
     public function storeLabel($label) {
         if($this->type === "UPS") {
             $imageData = str_replace(' ', '+', $label);
-            $fileName = "label_" . time() . "_" . Str::random() . ".gif";
+            $fileName = "label_" . time() . "_UPS_" . Str::random() . ".gif";
             Storage::disk('local')->put("public/{$fileName}", base64_decode($imageData));
+            $this->attach("storage/{$fileName}", [ "key" => "label", "name" => "label" ]);
+            Storage::disk('local')->delete("public/{$fileName}");
+        } else {
+            $fileName = "label_" . time() . "_FEDEX_" . Str::random() . ".pdf";
+            Storage::disk("local")->put("public/{$fileName}", $label);
             $this->attach("storage/{$fileName}", [ "key" => "label", "name" => "label" ]);
             Storage::disk('local')->delete("public/{$fileName}");
         }
