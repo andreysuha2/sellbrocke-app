@@ -28,6 +28,11 @@ Route::group([ "prefix" => "admin" ], function () {
         });
         Route::group([ "prefix" => "merchants", "namespace" => "Merchants\Admin" ], function () {
             Route::get("/", "MerchantController@index");
+            Route::group([ "prefix" => "merchant" ], function () {
+                Route::group([ "prefix" => "{merchant}" ], function () {
+                    Route::put("update-password", "MerchantController@updatePassword");
+                });
+            });
         });
         Route::group([ "prefix" => "companies" ], function () {
             Route::get("", "CompaniesController@getCompanies");

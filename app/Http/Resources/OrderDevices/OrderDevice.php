@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\OrderDevices;
 
+use App\Http\Resources\Companies\Company as CompanyResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\Conditions\Condition as ConditionResource;
 use App\Http\Resources\Defects\DefectsCollection;
@@ -29,7 +30,8 @@ class OrderDevice extends JsonResource
         $thumbnailPath = $thumbnailRecord ? $thumbnailRecord->url : null;
 
         return [
-            "id" => $this->device->id,
+            "deviceId" => $this->device->id,
+            "id" => $this->id,
             "name" => $name,
             "thumbnail" => $thumbnailPath,
             "description" => $this->device->description,
@@ -37,6 +39,7 @@ class OrderDevice extends JsonResource
                 "base" => $this->device->base_price,
                 "discounted" => $this->discounted_price
             ],
+            "company" => new CompanyResource($this->device->company),
             "condition" => new ConditionResource($this->condition),
             "defects" => new DefectsCollection($this->defects),
             "productsGrids" => $this->when($this->device->use_products_grids, $productsGrids)
