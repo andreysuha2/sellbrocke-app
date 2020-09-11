@@ -53,7 +53,7 @@ class SearchSlug extends JsonResource
             "list" => $this->when(isset($pageData["list"]), $pageData["list"] ?? null),
             "paginator" => $this->when(isset($pageData["paginator"]), array_merge([
                 "parameter_name" => $this->pageParamName
-            ], $pageData["paginator"])),
+            ], $pageData["paginator"] ?? [])),
             "listType" => $this->when(isset($pageData["pageListType"]), $pageData["pageListType"] ?? null),
             "redirectTo" => $this->when(isset($pageData["redirectTo"]), $pageData["redirectTo"] ?? null),
             "conditions" => $this->when(isset($pageData["conditions"]), $pageData["conditions"] ?? null)
