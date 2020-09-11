@@ -43,12 +43,8 @@ class UPSService implements UPSInterface
             'application/json'
         )->post($url);
         
-        if ($response->serverError()) {
-            throw new Exception('Error: 500 Internal Server Error');
-        }
-
-        if ($response->clientError()) {
-            throw new Exception('Error: 400 Bad request');
+        if ($response->serverError() || $response->clientError()) {
+            throw new Exception($response);
         }
 
         if ($response->ok()) {
