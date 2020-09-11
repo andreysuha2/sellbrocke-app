@@ -10,7 +10,7 @@ class Merchant extends Authenticatable
 {
     use SoftDeletes, HasApiTokens;
 
-    protected $guard = "merchant";
+    protected $table = "merchants";
 
     protected $fillable = [ "name", "login", "password" ];
 
