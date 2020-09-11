@@ -14,6 +14,9 @@ class OrderShipment extends JsonResource
      */
     public function toArray($request)
     {
+        $label = $this->attachment("label");
+        $labelUrl = $label ? $label->url : null;
+
         return [
             "id" => $this->id,
             "status" => $this->status,
@@ -27,7 +30,7 @@ class OrderShipment extends JsonResource
                 "value" => $this->weight,
                 "code" => $this->weight_code
             ],
-            "label" => $this->attachment("label")->url
+            "label" => $labelUrl
         ];
     }
 }
