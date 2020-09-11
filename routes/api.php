@@ -25,6 +25,7 @@ Route::group([ "prefix" => "admin" ], function () {
         });
         Route::group([ "prefix" => "user" ], function () {
             Route::get("", "UserController@index");
+            Route::put("", "UserController@update");
         });
         Route::group([ "prefix" => "merchants", "namespace" => "Merchants\Admin" ], function () {
             Route::get("/", "MerchantController@index");
