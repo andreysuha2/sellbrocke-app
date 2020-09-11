@@ -15,8 +15,8 @@ class MerchantTableSeeder extends Seeder
     {
         Merchant::create([
             "name" => "Sellbroke",
-
-
+            "login" => "sellbroke",
+            "password" => 123123123,
             "url" => env("DEFAULT_MERCHANT_SLUG", "http://localhost")
         ]);
     }
