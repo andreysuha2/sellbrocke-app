@@ -63,9 +63,9 @@ class CreateOrder extends FormRequest
             "devices.*.condition" => "required|numeric|exists:conditions,id",
             "devices.*" => [ function($attribute, $value, $fail) {
                 $device = Device::find($value["id"]);
-                if($device && isset($value["defects"])) {
+                if($device) {
                     $this->checkProductsGrid($device, $value, $fail, $attribute);
-                    $this->checkDefects($device, $value, $fail, $attribute);
+                    if(isset($value["defects"])) $this->checkDefects($device, $value, $fail, $attribute);
                 }
             } ],
             "shipment.type" => "in:FEDEX,UPS"
