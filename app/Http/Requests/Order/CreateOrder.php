@@ -63,7 +63,7 @@ class CreateOrder extends FormRequest
             "devices.*.condition" => "required|numeric|exists:conditions,id",
             "devices.*" => [ function($attribute, $value, $fail) {
                 $device = Device::find($value["id"]);
-                if($device) {
+                if($device && isset($value["defects"])) {
                     $this->checkProductsGrid($device, $value, $fail, $attribute);
                     $this->checkDefects($device, $value, $fail, $attribute);
                 }
