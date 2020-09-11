@@ -34,7 +34,6 @@ class OrdersController extends Controller
         Gate::forUser(Auth::guard("api-merchants")->user())->authorize("create-order", $customer);
         $order = $customer->orders()->create([ "status" => "open" ]);
         $shippingData = $this->createShipment($request);
-        return $shippingData;
         $shipping = $order->shipment()->create($shippingData);
         $shipping->storeLabel($shippingData["label"]);
         collect($request->devices)->each(function ($deviceData) use ($order) {
@@ -119,7 +118,6 @@ class OrdersController extends Controller
                 "total_charges" => $shippingResponse["ShipmentResults"]["ShipmentCharges"]["TotalCharges"]["MonetaryValue"],
                 "currency_code" => $shippingResponse["ShipmentResults"]["ShipmentCharges"]["TotalCharges"]["CurrencyCode"],
                 "status" => "created",
-                "data" => json_encode([]),
                 "label" => $shippingLabel
             ];
         } else if($request->shipment["type"] === "FEDEX") {
@@ -152,9 +150,16 @@ class OrdersController extends Controller
                 ]
             ];
             $shippingResponse = $shipping->shipment($query);
+            $shippingResponseDetails = $shippingResponse["CompletedShipmentDetail"]["CompletedPackageDetails"][0]["PackageRating"]["PackageRateDetails"][0];
             $shippingData = [
                 "type" => "FEDEX",
-                "tracking_number" => $shippingResponse
+                "tracking_number" => $shippingResponse["CompletedShipmentDetail"]["MasterTrackingId"]["TrackingNumber"],
+                "weight" => $shippingResponseDetails["BillingWeight"]["Value"],
+                "weight_code" => $shippingResponseDetails["BillingWeight"]["Units"],
+                "total_charges" => $shippingResponseDetails["NetCharge"]["Amount"],
+                "currency_code" => $shippingResponseDetails["NetCharge"]["Currency"],
+                "status" => "created",
+                "label" => $shippingResponse["CompletedShipmentDetail"]["CompletedPackageDetails"][0]["Label"]["Parts"][0]["Image"]
             ];
         } else {
             return abort("404");
