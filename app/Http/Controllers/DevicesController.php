@@ -47,7 +47,7 @@ class DevicesController extends Controller
         }
         if($request->has("detach_categories")) $device->categories()->detach($request->detach_categories);
         if($request->has("attach_categories")) $device->categories()->attach($request->attach_categories);
-        if(!$request->has("use_products_grids")) $device->productsGrids()->detach();
+        if(!$device->use_products_grids) $device->productsGrids()->detach();
         else {
             if($request->has("attach_products_grids")) $device->productsGrids()->attach($request->attach_products_grids);
             if($request->has("detach_products_grids")) $device->productsGrids()->detach($request->detach_products_grids);

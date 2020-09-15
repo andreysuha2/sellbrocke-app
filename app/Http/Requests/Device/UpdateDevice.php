@@ -50,17 +50,15 @@ class UpdateDevice extends FormRequest
         if($this->request->has("detach_categories")) {
             $this->merge([ "detach_categories" => json_decode($this->detach_categories) ]);
         }
-        if($this->request->has("use_products_grids") && $this->use_products_grids) {
-            if($this->request->has("attach_products_grids")) {
-                $this->merge([
-                    "attach_products_grids" => json_decode($this->attach_products_grids)
-                ]);
-            }
-            if($this->request->has("detach_products_grids")) {
-                $this->merge([
-                    "detach_products_grids" => json_decode($this->detach_products_grids)
-                ]);
-            }
+        if($this->request->has("attach_products_grids")) {
+            $this->merge([
+                "attach_products_grids" => json_decode($this->attach_products_grids)
+            ]);
+        }
+        if($this->request->has("detach_products_grids")) {
+            $this->merge([
+                "detach_products_grids" => json_decode($this->detach_products_grids)
+            ]);
         }
     }
 }
