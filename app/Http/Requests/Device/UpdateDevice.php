@@ -34,10 +34,8 @@ class UpdateDevice extends FormRequest
             "attach_categories.*" => "sometimes|numeric|exists:categories,id|unique:category_device,category_id,NULL,id,device_id,$deviceId",
             "detach_categories" => "sometimes|required|present|array",
             "detach_categories.*" => "sometimes|numeric",
-            "attach_products_grids" => "sometimes|required|present|array",
-            "attach_products_grids.*" => "sometimes|numeric|exists:products_grids,id|unique:device_product_grid,product_grid_id,NULL,id,device_id,$deviceId",
-            "detach_products_grids" => "sometimes|required|present|array",
-            "detach_products_grids.*" => "sometimes|numeric",
+            "products_grids" => "sometimes|required|present|array",
+            "products_grids.*" => "sometimes|numeric|exists:products_grids,id",
             "slug" => "sometimes|required|unique:devices,slug,NULL,id,company_id,$this->company_id|alpha_dash"
         ];
     }
@@ -50,14 +48,9 @@ class UpdateDevice extends FormRequest
         if($this->request->has("detach_categories")) {
             $this->merge([ "detach_categories" => json_decode($this->detach_categories) ]);
         }
-        if($this->request->has("attach_products_grids")) {
+        if($this->request->has("products_grids")) {
             $this->merge([
-                "attach_products_grids" => json_decode($this->attach_products_grids)
-            ]);
-        }
-        if($this->request->has("detach_products_grids")) {
-            $this->merge([
-                "detach_products_grids" => json_decode($this->detach_products_grids)
+                "products_grids" => json_decode($this->products_grids)
             ]);
         }
     }
