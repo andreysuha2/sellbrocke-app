@@ -7,6 +7,7 @@ use App\Http\Resources\Orders\OrdersPageCollection;
 use App\Models\Condition;
 use App\Models\Device;
 use App\Models\OrderDevice;
+use App\Models\Shipment;
 use App\Services\FedExService;
 use App\Services\UPSService;
 use Illuminate\Http\Request;
@@ -166,5 +167,14 @@ class OrdersController extends Controller
         }
 
         return $shippingData;
+    }
+
+    public function setShipmentStatus(Request $request)
+    {
+        $shipment = Shipment::find($request->id);
+        $shipment->status = 'label-printed';
+        $shipment->save();
+
+        return response()->json(["success" => true, "status" => "label-printed"]);
     }
 }
