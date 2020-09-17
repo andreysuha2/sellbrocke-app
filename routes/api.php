@@ -119,6 +119,8 @@ Route::group([ "middleware" => "auth:api-merchants", 'prefix' => 'merchants', 'n
             });
         });
     });
+
+    Route::post("shipment", "OrdersController@setShipmentStatus");
 });
 
 Route::post('/payment', 'PaymentController@payment');
