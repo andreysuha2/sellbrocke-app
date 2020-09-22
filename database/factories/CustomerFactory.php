@@ -12,6 +12,12 @@ $factory->define(Customer::class, function (Faker $faker) {
         "email" => $faker->email,
         "login" => $faker->name,
         "first_name" => $faker->firstName,
-        "last_name" => $faker->lastName
+        "last_name" => $faker->lastName,
+        "address" => $faker->streetAddress,
+        "city" => $faker->city,
+        "state" => $faker->stateAbbr,
+        "zip" => $faker->postcode,
+        "phone" => $faker->phoneNumber,
+        "paypal_email" => $faker->email
     ];
 });
