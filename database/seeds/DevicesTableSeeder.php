@@ -20,13 +20,15 @@ class DevicesTableSeeder extends Seeder
     private $faker;
 
     public function __construct() {
-        $this->categoriesIds = \App\Models\Category::whereIsLeaf()->get()->map(function ($category) { return $category->id; });
+        $this->categoriesIds = \App\Models\Category::whereIsLeaf()
+            ->get()
+            ->map(function ($category) { return $category->id; });
         $this->productsGridsIds["carriers"] = \App\Models\ProductGrid::where("type", "carrier")
-                                                                      ->get()
-                                                                      ->map(function ($productGrid) { return $productGrid->id; });
+            ->get()
+            ->map(function ($productGrid) { return $productGrid->id; });
         $this->productsGridsIds["sizes"] = \App\Models\ProductGrid::where("type", "size")
-                                                                     ->get()
-                                                                     ->map(function ($productGrid) { return $productGrid->id; });
+            ->get()
+            ->map(function ($productGrid) { return $productGrid->id; });
         $this->faker = \Faker\Factory::create();
     }
 
