@@ -24,8 +24,10 @@ class Order extends JsonResource
             "devices" => new OrderDevicesCollection($this->devices),
             "customer" => new CustomerResource($this->customer),
             "prices" => $this->prices,
+            "payment" => $this->payment,
             "date" => $this->created_at,
             "log" => new OrderLogCollection($this->log),
+            "test" => 'fu k',
             "shipment" => new OrderShipmentResource($this->shipment)
         ];
     }

@@ -17,6 +17,7 @@ class CreateOrdersTable extends Migration
             $table->id();
             $table->enum("status", [ "open", "closed", "canceled" ])->default("open");
             $table->bigInteger("customer_id");
+            $table->enum("payment", [ "paypal", "check" ]);
             $table->timestamps();
         });
     }

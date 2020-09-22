@@ -8,6 +8,7 @@ class CustomerTableSeeder extends Seeder
     private $devices;
 
     public function __construct() {
+        $this->faker = \Faker\Factory::create();
         $this->devicesConditions = \App\Models\Condition::all();
         $this->devices = \App\Models\Device::all();
     }
@@ -27,9 +28,13 @@ class CustomerTableSeeder extends Seeder
 
     private function makeOrders(\App\Models\Customer $customer, $ordersCount) {
         $statuses = [ "open", "closed", "canceled" ];
+        $payments = [ "paypal", "check" ];
         for ($i = 0; $i < $ordersCount; $i++) {
             $devicesCount = rand(1, 10);
-            $order = $customer->orders()->create([ "status" => $statuses[rand(0, 2)] ]);
+            $order = $customer->orders()->create([
+                "status" => $statuses[rand(0, 2)],
+                "payment" => $payments[rand(0, 1)]
+            ]);
             $this->makeOrderDevices($order, $devicesCount);
         }
     }

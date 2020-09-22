@@ -33,7 +33,7 @@ class OrdersController extends Controller
 
     public function createOrder(Customer $customer, CreateOrderRequest $request) {
         Gate::forUser(Auth::guard("api-merchants")->user())->authorize("create-order", $customer);
-        $order = $customer->orders()->create([ "status" => "open" ]);
+        $order = $customer->orders()->create($request->toArray());
         $shippingData = $this->createShipment($request);
         $shipping = $order->shipment()->create($shippingData);
         $shipping->storeLabel($shippingData["label"]);

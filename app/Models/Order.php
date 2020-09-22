@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    protected $fillable = [ "status" ];
+    protected $fillable = [ "status", "payment" ];
 
     public function customer() {
         return $this->belongsTo("App\Models\Customer", "customer_id");

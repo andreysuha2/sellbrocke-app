@@ -26,7 +26,13 @@ class Customer extends JsonResource
             "email" => $this->email,
             "login" => $this->login,
             "firstName" => $this->first_name,
-            "lastName" => $this->last_name
+            "lastName" => $this->last_name,
+            "address" => $this->address,
+            "city" => $this->city,
+            "state" => $this->state,
+            "zip" => $this->zip,
+            "phone" => $this->phone,
+            "emailPayPal" => $this->paypal_email
         ];
     }
 }
