@@ -108,12 +108,14 @@ Route::group([ "middleware" => "auth:api-merchants", 'prefix' => 'merchants', 'n
     Route::group([ "prefix" => "customer" ], function () {
         Route::get("/{merchantCustomerId}", "CustomerController@index");
         Route::post("/{merchantCustomerId}", "CustomerController@update");
+        Route::get("/{merchantCustomerId}/orders", "OrdersController@getOrdersByCustomerId");
         Route::post("", "CustomerController@store");
         Route::delete("", "CustomerController@delete");
     });
+
     Route::get("search/{query?}", "MerchantController@search")->where("query", "(.*)");
     Route::group([ "prefix" => "orders/{merchant_customer}" ], function () {
-        Route::get("", "OrdersController@getOrders");
+        Route::get("/", "OrdersController@getOrders");
         Route::group([ "prefix" => "order" ], function () {
             Route::post("", "OrdersController@createOrder");
             Route::group([ "prefix" => "{order}" ], function () {
