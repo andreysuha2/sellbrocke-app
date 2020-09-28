@@ -25,9 +25,8 @@ class Order extends JsonResource
             "customer" => new CustomerResource($this->customer),
             "prices" => $this->prices,
             "payment" => $this->payment,
-            "date" => $this->created_at,
+            "date" => $this->created_at->format('m-d-Y H:i:s'),
             "log" => new OrderLogCollection($this->log),
-            "test" => 'fu k',
             "shipment" => new OrderShipmentResource($this->shipment)
         ];
     }

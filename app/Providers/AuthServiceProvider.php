@@ -52,5 +52,9 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define("create-order", function (Merchant $merchant, Customer $customer) {
             return $merchant->customers->contains($customer);
         });
+
+        Gate::define("get-orders-by-customer", function (Merchant $merchant, Customer $customer) {
+            return $merchant->customers->contains($customer);
+        });
     }
 }

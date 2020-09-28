@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Merchants;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Orders\OrdersCollection;
 use App\Http\Resources\Orders\OrdersPageCollection;
 use App\Models\Condition;
 use App\Models\Device;
@@ -176,5 +177,13 @@ class OrdersController extends Controller
         $shipment->save();
 
         return response()->json(["success" => true, "status" => "label-printed"]);
+    }
+
+    public function getOrdersByCustomerId($merchantCustomerId)
+    {
+        $customer = Customer::where('merchant_customer_id', $merchantCustomerId)->first();
+        $orders = $customer->orders;
+
+        return new OrdersCollection($orders);
     }
 }
