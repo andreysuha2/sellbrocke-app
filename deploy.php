@@ -38,9 +38,9 @@ host('development')
     
 // Tasks
 
-/*task('build', function () {
-    run('cd {{release_path}} && build');
-});*/
+task('deploy:storage-link', function () {
+    run('php artisan storage:link');
+});
 
 desc('Deploy your project');
 task('deploy', [
@@ -53,6 +53,7 @@ task('deploy', [
     'deploy:writable',
     'deploy:vendors',
     'deploy:clear_paths',
+    'deploy:storage-link',
     'deploy:symlink',
     'deploy:unlock',
     'cleanup',
@@ -63,6 +64,4 @@ task('deploy', [
 after('deploy:failed', 'deploy:unlock');
 
 // Migrate database before symlink new release.
-
 before('deploy:symlink', 'artisan:migrate');
-

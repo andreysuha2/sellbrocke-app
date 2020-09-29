@@ -20,7 +20,7 @@ class SearchSlug extends JsonResource
 {
     private $request;
     private $pageParamName = "p";
-    private $perPageCount = 10;
+    private $perPageCount = 2;
 
     public function __construct($resource, Request $request) {
         parent::__construct($resource);
@@ -81,9 +81,11 @@ class SearchSlug extends JsonResource
         $result = [];
         $result["item"] = new CategoryPageResource($item);
         if($item->isLeaf()) {
-            $companies = $item->companies()
-                              ->paginate($this->perPageCount)
-                              ->setPageName($this->pageParamName);
+            $companies = $item
+                ->companies()
+                ->paginate($this->perPageCount)
+                ->setPageName($this->pageParamName);
+
             if($companies->count() > 1) {
                 $companiesPaginate = (new CompaniesPagesCollection($companies))->response()->getData(true);
                 $result["list"] = $companiesPaginate["data"];
@@ -96,10 +98,13 @@ class SearchSlug extends JsonResource
         } else {
             $result["pageListType"] = "categories";
             $categories = (new CategoriesPageCollection(
-                                    $item->children()
-                                        ->paginate($this->perPageCount)
-                                        ->setPageName($this->pageParamName)
-                              ))->response()->getData(true);
+                $item->children()
+                    ->paginate($this->perPageCount)
+                    ->setPageName($this->pageParamName)
+            ))->response()->getData(true);
+            if (count($categories['data']) == 1) {
+                $result ["redirectTo"] = $categories['data'][0]['slug'];
+            }
             $result["list"] = $categories["data"];
             $result["paginator"] = $categories["meta"];
         }
