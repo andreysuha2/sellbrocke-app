@@ -20,7 +20,7 @@ class SearchSlug extends JsonResource
 {
     private $request;
     private $pageParamName = "pnum";
-    private $perPageCount = 10;
+    private $perPageCount = 3;
 
     public function __construct($resource, Request $request) {
         parent::__construct($resource);

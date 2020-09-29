@@ -39,7 +39,7 @@ host('development')
 // Tasks
 
 task('deploy:storage-link', function () {
-    run('php artisan storage:link');
+    run('php /var/www/test19/data/www/test19.f5-cloud.top/current/artisan storage:link');
 });
 
 desc('Deploy your project');
@@ -53,8 +53,8 @@ task('deploy', [
     'deploy:writable',
     'deploy:vendors',
     'deploy:clear_paths',
-    'deploy:storage-link',
     'deploy:symlink',
+    'deploy:storage-link',
     'deploy:unlock',
     'cleanup',
     'success'
