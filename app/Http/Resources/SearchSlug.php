@@ -19,14 +19,14 @@ use Illuminate\Pagination\Paginator;
 class SearchSlug extends JsonResource
 {
     private $request;
-    private $pageParamName = "p";
-    private $perPageCount = 2;
+    private $pageParamName = "pnum";
+    private $perPageCount = 10;
 
     public function __construct($resource, Request $request) {
         parent::__construct($resource);
         $this->request = $request;
         Paginator::currentPageResolver(function () use ($request) {
-            return $request->has("p") ? $request->p : 1;
+            return $request->has($this->pageParamName) ? $request[$this->pageParamName] : 1;
         });
     }
 
