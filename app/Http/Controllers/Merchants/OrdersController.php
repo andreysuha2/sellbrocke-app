@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Merchants;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Orders\OrdersCollection;
 use App\Http\Resources\Orders\OrdersPageCollection;
+use App\Jobs\OrderCreateNotificationJob;
 use App\Models\Condition;
 use App\Models\Device;
 use App\Models\OrderDevice;
@@ -51,6 +52,9 @@ class OrdersController extends Controller
                 $orderDevice->products_grids()->attach($deviceData["productsGrids"]);
             }
         });
+
+        dispatch(new OrderCreateNotificationJob($order, $customer));
+
         return new OrderResource($order);
     }
 

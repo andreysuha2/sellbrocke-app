@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\PaymentPayPalNotificationJob;
+use App\Jobs\PaymentCheckNotificationJob;
 use App\Models\Payment;
 use Illuminate\Http\Request;
+use League\Flysystem\Exception;
 use PayPal\Api\Payout;
 use PayPal\Api\PayoutSenderBatchHeader;
 use PayPal\Api\PayoutItem;
@@ -25,6 +28,16 @@ class PaymentController extends Controller
 
     public function payment(Request $request)
     {
+        // TODO: Replace dummy data and use order's data
+        $order = new \stdClass();
+        $order->customer = new \stdClass();
+        $order->customer->email = 'web.jungle@gmail.com';
+        $order->customer->first_name = 'Ben Hocks';
+        $order->customer->paypal_email = 'ben.hocks@gmail.com';
+        $order->prices = [
+            'discounted' => 205.00
+        ];
+
         $paymentDetails = (object) $request;
 
         if (empty($paymentDetails->email)) {
@@ -64,13 +77,15 @@ class PaymentController extends Controller
 
             $this->status($result->batch_header->payout_batch_id);
 
+            dispatch(new PaymentPayPalNotificationJob($order));
+
             return response()->json([
-                'msg' => 'The payment was successfully sent!'
+                'message' => 'The payment was successfully sent!'
             ], 200);
 
         } catch (\Exception $e) {
             return response()->json([
-                'msg' => $e->getMessage()
+                'message' => $e->getMessage()
             ], 400);
         }
     }
@@ -83,5 +98,30 @@ class PaymentController extends Controller
         $payment = Payment::where('payout_batch_id', '=', $payoutBatchId)->first();
         $payment->status = $result->batch_header->batch_status;
         $payment->save();
+    }
+
+    public function paymentCheck()
+    {
+        try {
+            // TODO: Replace dummy data and use order's data
+            $order = new \stdClass();
+            $order->customer = new \stdClass();
+            $order->customer->email = 'web.jungle@gmail.com';
+            $order->customer->first_name = 'John';
+            $order->customer->last_name = 'Doe';
+            $order->customer->paypal_email = 'john.doe@gmail.com';
+            $order->customer->address = 'Sixth Avenue';
+            $order->customer->city = 'New York';
+            $order->customer->state = 'NY';
+            $order->customer->zip = '10001';
+            $order->prices = [
+                'discounted' => 350.00
+            ];
+
+            dispatch(new PaymentCheckNotificationJob($order));
+        } catch (Exception $e) {
+            echo $e->getMessage();
+            exit;
+        }
     }
 }
