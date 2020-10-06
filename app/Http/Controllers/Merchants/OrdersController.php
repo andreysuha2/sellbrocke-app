@@ -5,20 +5,21 @@ namespace App\Http\Controllers\Merchants;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Orders\OrdersCollection;
 use App\Http\Resources\Orders\OrdersPageCollection;
+use App\Http\Resources\Orders\Order as OrderResource;
+use App\Http\Requests\Order\CreateOrder as CreateOrderRequest;
 use App\Jobs\OrderCreateNotificationJob;
 use App\Models\Condition;
+use App\Models\Customer;
 use App\Models\Device;
+use App\Models\Order;
 use App\Models\OrderDevice;
 use App\Models\Shipment;
 use App\Services\FedExService;
 use App\Services\UPSService;
 use Illuminate\Http\Request;
-use App\Models\Customer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-use App\Models\Order;
-use App\Http\Resources\Orders\Order as OrderResource;
-use App\Http\Requests\Order\CreateOrder as CreateOrderRequest;
+use Illuminate\Support\Str;
 use GuzzleHttp\Client;
 
 class OrdersController extends Controller
@@ -35,7 +36,10 @@ class OrdersController extends Controller
 
     public function createOrder(Customer $customer, CreateOrderRequest $request) {
         Gate::forUser(Auth::guard("api-merchants")->user())->authorize("create-order", $customer);
-        $order = $customer->orders()->create($request->toArray());
+        $order = $customer->orders()->create(array_merge(
+            ["status" => "pending", "confirmation_key" => Str::random(32)],
+            $request->toArray()
+        ));
         $shippingData = $this->createShipment($request);
         $shipping = $order->shipment()->create($shippingData);
         $shipping->storeLabel($shippingData["label"]);
