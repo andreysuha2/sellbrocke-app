@@ -165,6 +165,7 @@ return [
         /*
          * Package Service Providers...
          */
+        \Bnb\Laravel\Attachments\AttachmentsServiceProvider::class,
 
         /*
          * Application Service Providers...
