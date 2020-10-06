@@ -93,11 +93,12 @@ Route::group([ "prefix" => "admin" ], function () {
         Route::group([ "prefix" => "customers" ], function () {
             Route::get("", "CustomersController@getCustomers");
         });
-        Route::group([ "prefix" => "orders"], function() {
+        Route::group([ "prefix" => "orders" ], function() {
             Route::get("", "OrdersController@getOrders");
             Route::group([ "prefix" => "order/{order}" ], function () {
                 Route::get("", "OrdersController@getOrder");
                 Route::put("status", "OrdersController@updateOrderStatus");
+                Route::get("order-reminder", "OrdersController@orderReminder");
             });
         });
     });
