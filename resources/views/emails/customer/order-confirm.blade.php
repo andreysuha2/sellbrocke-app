@@ -48,13 +48,13 @@
     <tr>
         <td bgcolor="#FFFFFF" style="padding: 10px 20px">
             Please click the following link to confirm your order:
-            <a href="#">Confirm</a>
+            <a href="{{env('DEFAULT_MERCHANT_SLUG')}}/order?a=confirm&id={{$order->id}}&key={{$order->confirmation_key}}">Confirm</a>
         </td>
     </tr>
     <tr>
         <td bgcolor="#FFFFFF" style="padding: 10px 20px">
             You can also cancel your order with the following link:
-            <a href="#">Cancel</a>
+            <a href="{{env('DEFAULT_MERCHANT_SLUG')}}/order?a=cancel&id={{$order->id}}&key={{$order->confirmation_key}}">Cancel</a>
         </td>
     </tr>
     <tr>
