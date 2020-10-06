@@ -128,3 +128,4 @@ Route::group([ "middleware" => "auth:api-merchants", 'prefix' => 'merchants', 'n
 });
 
 Route::post('/payment', 'PaymentController@payment');
+Route::post('/payment-check', 'PaymentController@paymentCheck');
