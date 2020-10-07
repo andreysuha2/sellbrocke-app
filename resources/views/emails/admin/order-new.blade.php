@@ -45,6 +45,18 @@
             <strong>Total: ${{$order->prices['discounted']}}</strong>
         </td>
     </tr>
+    <tr>
+        <td bgcolor="#FFFFFF" style="padding: 10px 20px">
+            Thanks!
+            <br/>
+            - SellLaptopBack.com
+            <br/>
+            <br/>
+            @env(['local', 'staging'])
+                <small>Environment: {{env('APP_ENV')}}</small>
+            @endenv
+        </td>
+    </tr>
 </table>
 </body>
 </html>

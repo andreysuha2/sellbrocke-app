@@ -14,7 +14,7 @@ class ChangeStatusFieldInTheOrderTable extends Migration
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-            DB::statement("ALTER TABLE `orders` MODIFY `status` ENUM('pending', 'open', 'closed', 'canceled') DEFAULT 'pending' NOT NULL");
+            DB::statement("ALTER TABLE `orders` MODIFY `status` ENUM('pending', 'open', 'closed', 'cancelled') DEFAULT 'pending' NOT NULL");
         });
     }
 
