@@ -14,32 +14,22 @@
     </tr>
     <tr>
         <td bgcolor="#ffffff" style="padding: 10px 20px">
-            Your PayPal payment in the amount of <strong>${{$order->prices['discounted']}}</strong> was sent to your PayPal e-mail address: <strong>{{$order->customer->paypal_email}}</strong>.
+            We just wanted to remind you that your package still hasn't been sent!
         </td>
     </tr>
     <tr>
         <td bgcolor="#ffffff" style="padding: 10px 20px">
+            Don't forget to include your order summary/packing slip in the box with your laptop.
+        </td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF" style="padding: 10px 20px">
+            To ensure that your device(s) arrive safely to our facility, we recommend 2+" of bubble wrap around the device(s) and securely taping the box. Please ensure that the shipping label is also securely taped to the box and clearly visible.
+        </td>
+    </tr>
+    <tr>
+        <td bgcolor="#FFFFFF" style="padding: 10px 20px">
             If you have any questions, please contact us!
-        </td>
-    </tr>
-    <tr>
-        <td bgcolor="#FFFFFF" style="padding: 10px 20px">
-            <div style="margin-top: 10px; margin-bottom: 20px;">
-                <a href="https://www.facebook.com/SellLaptopBack/" target="_blank" rel="noopener"><img src="https://selllaptopback.com/wp-content/uploads/2016/03/like_SellBroke_on_facebook.png" alt="Like SellBroke on Facebook!" /></a>
-            </div>
-            <div>
-                <a href="https://www.facebook.com/SellLaptopBack/" target="_blank" rel="noopener">Like us on Facebook</a> and tell others about your experience with <a href="https://selllaptopback.com" target="_blank" rel="noopener">SellLaptopBack.com</a>!
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td bgcolor="#FFFFFF" style="padding: 10px 20px">
-            <a href="https://www.google.com/search?q=sellLaptopBack" target="_blank" rel="noopener">Leave us a review on Google!</a>
-        </td>
-    </tr>
-    <tr>
-        <td bgcolor="#FFFFFF" style="padding: 10px 20px">
-            Ready to sell us another device? Head to SellLaptopBack.com and get a quote today!
         </td>
     </tr>
     <tr>
