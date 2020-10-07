@@ -117,6 +117,7 @@ Route::group([ "middleware" => "auth:api-merchants", 'prefix' => 'merchants', 'n
     Route::get("search/{query?}", "MerchantController@search")->where("query", "(.*)");
     Route::group([ "prefix" => "orders/{merchant_customer}" ], function () {
         Route::get("/", "OrdersController@getOrders");
+        Route::put("update-status", "OrdersController@updateOrderStatus");
         Route::group([ "prefix" => "order" ], function () {
             Route::post("", "OrdersController@createOrder");
             Route::group([ "prefix" => "{order}" ], function () {

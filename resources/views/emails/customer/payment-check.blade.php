@@ -50,6 +50,11 @@
             Thanks!
             <br/>
             - SellLaptopBack.com
+            <br/>
+            <br/>
+            @env(['local', 'staging'])
+                <small>Environment: {{env('APP_ENV')}}</small>
+            @endenv
         </td>
     </tr>
 </table>

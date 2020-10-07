@@ -62,6 +62,46 @@ class OrdersController extends Controller
         return new OrderResource($order);
     }
 
+    public function updateOrderStatus(Request $request, $customer) {
+        $action = null;
+
+        if (empty($request->id) && empty($request->key)) {
+            return response()->json([
+                'action' => $action,
+                'message' => 'Incorrect order data!'
+            ], 400);
+        }
+
+        $order = Order::where('id', $request->id)
+            ->where('customer_id', $customer->id)
+            ->where('confirmation_key', $request->key)
+            ->first();
+
+        if (is_null($order)) {
+            return response()->json([
+                'action' => $action,
+                'message' => 'An order was not found!'
+            ], 404);
+        }
+
+        if ($request->action == 'confirm') {
+            $order->status = 'open';
+            $order->confirmation_key = null;
+            $action = 'confirmed';
+        } else if ($request->action == 'cancel') {
+            $order->status = 'cancelled';
+            $order->confirmation_key = null;
+            $action = 'cancelled';
+        }
+
+        $order->save();
+
+        return response()->json([
+            'action' => $action,
+            'message' => "Your order was successfully {$action}!"
+        ], 200);
+    }
+
     private function createShipment(Request $request) {
         if($request->shipment["type"] === "UPS") {
             $shipping = new UPSService(new Client());
