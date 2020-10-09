@@ -6,30 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <body style="margin: 0; padding: 0;">
-<table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="margin-top: 15px; margin-bottom: 15px;">
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
     <tr>
         <td bgcolor="#ffffff" style="padding: 10px 20px">
-            Hello, {{$order->customer->first_name}}!
-        </td>
-    </tr>
-    <tr>
-        <td bgcolor="#ffffff" style="padding: 10px 20px">
-            We just wanted to remind you that your package still hasn't been sent!
+            Hello, {{$customer->first_name}}!
         </td>
     </tr>
     <tr>
         <td bgcolor="#ffffff" style="padding: 10px 20px">
-            Don't forget to include your order summary/packing slip in the box with your laptop.
+            You are registered at the Sellbroke.com
         </td>
     </tr>
     <tr>
-        <td bgcolor="#FFFFFF" style="padding: 10px 20px">
-            To ensure that your device(s) arrive safely to our facility, we recommend 2+" of bubble wrap around the device(s) and securely taping the box. Please ensure that the shipping label is also securely taped to the box and clearly visible.
+        <td bgcolor="#ffffff" style="padding: 10px 20px">
+            <strong>Your registration data</strong><br/>
+            First Name: {{$customer->first_name}}<br/>
+            Last Name: {{$customer->last_name}}<br/>
+            E-Mail: {{$customer->email}}<br/>
+            Username: {{$customer->username}}<br/>
+            Password: {{$customer->password}}<br/>
         </td>
     </tr>
     <tr>
-        <td bgcolor="#FFFFFF" style="padding: 10px 20px">
-            If you have any questions, please contact us!
+        <td bgcolor="#ffffff" style="padding: 10px 20px">
+            <strong>You can change your registration information in your profile at the Sellbroke.com</strong>
         </td>
     </tr>
     <tr>
@@ -40,7 +40,7 @@
             <br/>
             <br/>
             @env(['local', 'testing'])
-                <small>Environment: {{env('APP_ENV')}}</small>
+            <small>Environment: {{env('APP_ENV')}}</small>
             @endenv
         </td>
     </tr>
