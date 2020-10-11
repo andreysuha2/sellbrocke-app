@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Merchants;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\CustomerAutoRegistrationNotificationJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class CustomerController extends Controller
 {
@@ -49,5 +51,16 @@ class CustomerController extends Controller
         $merchant = Auth::guard("api-merchants")->user();
         $customer = $merchant->getCustomerByMCId($request->id)->firstOrFail();
         $customer->delete();
+    }
+
+    public function autoRegistrationEmail(Request $request) {
+        $customer = new \stdClass();
+        $customer->first_name = $request->first_name;
+        $customer->last_name = $request->last_name;
+        $customer->email = $request->email;
+        $customer->username = $request->username;
+        $customer->password = $request->password;
+
+        $this->dispatch(new CustomerAutoRegistrationNotificationJob($customer));
     }
 }

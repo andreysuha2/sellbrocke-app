@@ -49,7 +49,7 @@
             - SellLaptopBack.com
             <br/>
             <br/>
-            @env(['local', 'staging'])
+            @env(['local', 'testing'])
                 <small>Environment: {{env('APP_ENV')}}</small>
             @endenv
         </td>
