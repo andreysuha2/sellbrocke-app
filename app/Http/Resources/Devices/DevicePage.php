@@ -50,6 +50,7 @@ class DevicePage extends JsonResource
             ],
             "thumbnail" => $thumbnailPath,
             "slug" => $this->slug,
+            "mainSlug" => $this->categories[0]->slug . "/" . $this->company->slug . "/" . $this->slug,
             "description" => $this->description,
             "productsGrids" => $this->when($this->withProductsGrids, [ "size" => $this->size, "carrier" => $this->carrier ])
         ];
