@@ -10,6 +10,14 @@ use App\Http\Resources\Orders\OrderShipment as OrderShipmentResource;
 class Order extends JsonResource
 {
     public static $wrap = "order";
+    public $tracking;
+
+    public function __construct($resource, $tracking = null)
+    {
+        parent::__construct($resource);
+        $this->tracking = $tracking;
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -25,9 +33,10 @@ class Order extends JsonResource
             "customer" => new CustomerResource($this->customer),
             "prices" => $this->prices,
             "payment" => $this->payment,
-            "date" => $this->created_at->format('m-d-Y H:i:s'),
+            "date" => $this->created_at->format('m-d-Y g:i a'),
             "log" => new OrderLogCollection($this->log),
-            "shipment" => new OrderShipmentResource($this->shipment)
+            "shipment" => new OrderShipmentResource($this->shipment),
+            'tracking' => $this->tracking
         ];
     }
 }
