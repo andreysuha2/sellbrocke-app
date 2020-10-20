@@ -56,7 +56,7 @@ class UPSService implements UPSInterface
 
     public function shipment($shipmentDetails)
     {
-        $url = 'https://wwwcie.ups.com/ship/v1/shipments?additionaladdressvalidation=city';
+        $url = env('UPS_URL') . '/ship/v1/shipments?additionaladdressvalidation=city';
 
         return $this->request($url, $shipmentDetails);
     }
@@ -67,7 +67,7 @@ class UPSService implements UPSInterface
             return null;
         }
 
-        $url = "https://wwwcie.ups.com/ship/v1/shipments/cancel/{$shipmentIdentificationNumber}";
+        $url = env('UPS_URL') . "/ship/v1/shipments/cancel/{$shipmentIdentificationNumber}";
 
         $response = Http::withHeaders(
             $this->headers
@@ -90,39 +90,54 @@ class UPSService implements UPSInterface
 
     public function label($shipmentDetails)
     {
-        $url = 'https://wwwcie.ups.com/ship/v1/shipments/labels';
+        $url = env('UPS_URL') . '/ship/v1/shipments/labels';
 
         return $this->request($url, $shipmentDetails);
     }
 
-    public function storeShipment($orderId, $shipmentResponse)
+    public function tracking($trackingNumber)
     {
-        if ($shipmentResponse && $shipmentResponse['ShipmentResponse']['Response']['ResponseStatus']['Code'] == 1) {
+        $url = env('UPS_URL') . "/track/v1/details/{$trackingNumber}";
 
-            $shipmentResults = $shipmentResponse['ShipmentResponse']['ShipmentResults'];
+        $response = Http::withHeaders(
+            $this->headers
+        )->get($url);
 
-            $shipment = new UPSShipment();
-            $shipment->order_id = $orderId;
-            $shipment->shipment_identification_number = $shipmentResults['ShipmentIdentificationNumber'];
-            $shipment->package_count = count($shipmentResults['PackageResults']);
-            $shipment->weight = $shipmentResults['BillingWeight']['Weight'];
-            $shipment->weight_code = $shipmentResults['BillingWeight']['UnitOfMeasurement']['Code'];
-            $shipment->weight_measurement = $shipmentResults['BillingWeight']['UnitOfMeasurement']['Description'];
-            $shipment->currency_code = $shipmentResults['ShipmentCharges']['TotalCharges']['CurrencyCode'];
-            $shipment->total_charges = $shipmentResults['ShipmentCharges']['TotalCharges']['MonetaryValue'];
-            $shipment->status = 'Delivery';
-            $shipment->save();
-
-            if ($shipment->id && $shipment->package_count > 0) {
-                foreach ($shipmentResults['PackageResults'] as $packageDetails) {
-                    $package = new UPSPackage();
-                    $package->shipment_id = $shipment->id;
-                    $package->tracking_number = $packageDetails['TrackingNumber'];
-                    $package->label = $packageDetails['ShippingLabel']['GraphicImage'];
-                    $package->save();
-                }
-            }
+        if ($response->serverError() || $response->clientError()) {
+            throw new Exception($response);
         }
+
+        if ($response->ok()) {
+            $response = $response->json();
+
+            if (!isset($response) && !isset($response['trackResponse'])) {
+                return null;
+            }
+
+            if (!isset($response['trackResponse']['shipment'][0]['package'][0]['activity'])) {
+                return null;
+            }
+
+            $events = $response['trackResponse']['shipment'][0]['package'][0]['activity'];
+
+            $data = [];
+            foreach ($events as $event) {
+                $data[] = [
+                    'timestamp' => date('Y-m-d', strtotime($event['date'])) . " " . date('g:i a', $event['time']),
+                    'eventType' => $event['status']['type'],
+                    'eventDescription' => $event['status']['description'],
+                    'address' => [
+                        'city' => $event['location']['address']['city'],
+                        'stateOrProvinceCode' => $event['location']['address']['stateProvince'],
+                        'countryCode' => $event['location']['address']['country']
+                    ]
+                ];
+            }
+
+            return $data;
+        }
+
+        return null;
     }
 
 }
