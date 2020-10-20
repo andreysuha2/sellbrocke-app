@@ -3,18 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\Devices\DevicesCollection;
-use App\Models\Category;
-use App\Models\Device;
-use App\Models\ProductGrid;
-use Illuminate\Http\Request;
 use App\Http\Requests\Device\CreateDevice as CreateDeviceRequest;
 use App\Http\Resources\Devices\Device as DeviceResource;
 use App\Http\Requests\Device\UpdateDevice as UpdateDeviceRequest;
+use App\Models\Category;
 use App\Models\Company;
+use App\Models\Device;
+use App\Models\ProductGrid;
+use Illuminate\Http\Request;
 
 class DevicesController extends Controller
 {
-    public function getDevices() {
+    public $itemsPerPage;
+
+    public function __construct(Request $request)
+    {
+        $this->itemsPerPage = env('DASHBOARD_ITEMS_PER_PAGE');
+    }
+
+    public function getDevices()
+    {
         $devices = Device::orderBy("id", "desc")->paginate(10);
         $companies = Company::select("id", "name")->get();
         $categories = Category::whereIsLeaf()->select("id", "name")->get();
@@ -27,7 +35,8 @@ class DevicesController extends Controller
         ]);
     }
 
-    public function createDevice(CreateDeviceRequest $request) {
+    public function createDevice(CreateDeviceRequest $request)
+    {
         $company = Company::findOrFail($request->company);
         $device = $company->devices()->create($request->toArray());
         $device->categories()->attach($request->categories);
@@ -38,7 +47,8 @@ class DevicesController extends Controller
         return new DeviceResource($device);
     }
 
-    public function updateDevice(Device $device, UpdateDeviceRequest $request) {
+    public function updateDevice(Device $device, UpdateDeviceRequest $request)
+    {
         $device->update($request->toArray());
         if($request->has("company")) {
             $company = Company::find($request->company);
@@ -53,7 +63,8 @@ class DevicesController extends Controller
         return new DeviceResource($device);
     }
 
-    public function removeDevice(Device $device, Request $request) {
+    public function removeDevice(Device $device, Request $request)
+    {
         $device->forceDelete();
         $lastDeviceId = $request->lastDeviceId;
         $nextDevice = $lastDeviceId ? Device::orderBy("id", "desc")->where("id", "<", $lastDeviceId)->first() : null;
@@ -61,9 +72,55 @@ class DevicesController extends Controller
         return response()->json([ "device" => new DeviceResource($device), "nextDevice" => $nextDevice ]);
     }
 
-    private function attachThumbnail(Device $device, $request) {
+    private function attachThumbnail(Device $device, $request)
+    {
         if($request->hasFile("thumbnail")) {
             $device->attach($request->file("thumbnail"), [ "key" => "thumbnail" ]);
         }
+    }
+
+    public function search(Request $request)
+    {
+        if (empty($request->qs)) {
+            return null;
+        }
+
+        $query = trim($request->qs);
+        $separatorPos = stripos($query, ' ');
+
+        if ($separatorPos > 0) {
+            $firstPart = substr($query, 0, $separatorPos);
+            $secondPart = substr($query, $separatorPos + 1);
+
+            $companies = Company::where('name', 'LIKE', "%{$firstPart}%")->get();
+
+            if (count($companies) > 0) {
+                $devices = Device::where('name', 'like', "%{$secondPart}%")
+                    ->whereIn('company_id', $companies)
+                    ->paginate($this->itemsPerPage);
+            } else {
+                $companies = Company::where('name', 'LIKE', "%{$secondPart}%")->get();
+
+                if (count($companies) > 0) {
+                    $devices = Device::where('name', 'like', "%{$firstPart}%")
+                        ->whereIn('company_id', $companies)
+                        ->paginate($this->itemsPerPage);
+                } else {
+                    $devices = Device::where('name', 'like', "%{$query}%")
+                        ->paginate($this->itemsPerPage);
+                }
+            }
+        } else {
+            $companies = Company::where('name', 'like', "%{$query}%")->get();
+            if (count($companies) > 0) {
+                $devices = Device::whereIn('company_id', $companies)
+                    ->paginate($this->itemsPerPage);
+            } else {
+                $devices = Device::where('name', 'LIKE', "%{$query}%")
+                    ->paginate($this->itemsPerPage);
+            }
+        }
+
+        return new DevicesCollection($devices);
     }
 }
