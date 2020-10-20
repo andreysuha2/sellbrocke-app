@@ -12,7 +12,7 @@ use App\Http\Requests\Company\UpdateCompany as UpdateCompanyRequest;
 class CompaniesController extends Controller
 {
     public function getCompanies() {
-        $companies = Company::all();
+        $companies = Company::orderBy('name')->get();
         return new CompaniesCollection($companies);
     }
 

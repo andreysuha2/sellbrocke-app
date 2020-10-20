@@ -24,17 +24,20 @@ use GuzzleHttp\Client;
 
 class OrdersController extends Controller
 {
-    public function getOrders(Customer $customer) {
+    public function getOrders(Customer $customer)
+    {
         $orders = $customer->orders()->paginate(10);
         return (new OrdersPageCollection($orders))->response()->getData(true);
     }
 
-    public function getOrder(Customer $customer, Order $order) {
+    public function getOrder(Customer $customer, Order $order)
+    {
         Gate::forUser(Auth::guard("api-merchants")->user())->authorize("get-order", [ $customer, $order ]);
         return new OrderResource($order);
     }
 
-    public function createOrder(Customer $customer, CreateOrderRequest $request) {
+    public function createOrder(Customer $customer, CreateOrderRequest $request)
+    {
         Gate::forUser(Auth::guard("api-merchants")->user())->authorize("create-order", $customer);
         $order = $customer->orders()->create(array_merge(
             ["status" => "pending", "confirmation_key" => Str::random(32)],
@@ -62,7 +65,8 @@ class OrdersController extends Controller
         return new OrderResource($order);
     }
 
-    public function updateOrderStatus(Request $request, $customer) {
+    public function updateOrderStatus(Request $request, $customer)
+    {
         $action = null;
 
         if (empty($request->id) && empty($request->key)) {
@@ -102,7 +106,8 @@ class OrdersController extends Controller
         ], 200);
     }
 
-    private function createShipment(Request $request) {
+    private function createShipment(Request $request)
+    {
         if($request->shipment["type"] === "UPS") {
             $shipping = new UPSService(new Client());
             $query = [
