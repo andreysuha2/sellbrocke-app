@@ -20,17 +20,20 @@ class MerchantController extends Controller
     public $pageParamName = "pnum";
     public $itemsPerPage = 50;
 
-    public function __construct(Request $request) {
+    public function __construct(Request $request)
+    {
         Paginator::currentPageResolver(function () use ($request) {
             return $request->has($this->pageParamName) ? $request[$this->pageParamName] : 1;
         });
     }
 
-    public function index() {
+    public function index()
+    {
         return new MerchantResource(Auth::guard('api-merchants')->user());
     }
 
-    public function search($queryString = null, Request $request) {
+    public function search($queryString = null, Request $request)
+    {
         if ($request->has('qs')) {
             $query = trim($request->qs);
 
@@ -50,7 +53,7 @@ class MerchantController extends Controller
                     $devicesRaw = Device::where('name', 'like', "%{$secondPart}%")
                         ->whereIn('company_id', $companies)
                         ->paginate($this->itemsPerPage)
-                        ->setPageName("pnum");
+                        ->setPageName($this->pageParamName);
                 } else {
                     // Else try to search companies which are matching to the second part of the query
                     $companies = Company::where('name', 'like', "%{$secondPart}%")->get();
@@ -61,14 +64,12 @@ class MerchantController extends Controller
                         $devicesRaw = Device::where('name', 'like', "%{$firstPart}%")
                             ->whereIn('company_id', $companies)
                             ->paginate($this->itemsPerPage)
-                            ->setPageName("pnum");
+                            ->setPageName($this->pageParamName);
                     } else {
-                        // Else try to get devices which are matching to the first or second word or whole query string
-                        $devicesRaw = Device::where('name', 'like', "%{$firstPart}%")
-                            ->orWhere('name', 'like', "%{$secondPart}%")
-                            ->orWhere('name', 'like', "%{$query}%")
+                        // Else try to get devices which are matching to whole query string
+                        $devicesRaw = Device::where('name', 'like', "%{$query}%")
                             ->paginate($this->itemsPerPage)
-                            ->setPageName("pnum");
+                            ->setPageName($this->pageParamName);
                     }
                 }
             } else {
@@ -80,12 +81,12 @@ class MerchantController extends Controller
                     // Get all devices of these companies
                     $devicesRaw = Device::whereIn('company_id', $companies)
                         ->paginate($this->itemsPerPage)
-                        ->setPageName("pnum");
+                        ->setPageName($this->pageParamName);
                 } else {
                     // Else get devices which are matching to the query string
                     $devicesRaw = Device::where('name', 'like', "%{$query}%")
                         ->paginate($this->itemsPerPage)
-                        ->setPageName("pnum");
+                        ->setPageName($this->pageParamName);
                 }
             }
 
@@ -96,7 +97,7 @@ class MerchantController extends Controller
                 'listType' => 'devices',
                 "paginator" => array_merge(
                     $devices["meta"],
-                    ["parameter_name" => "pnum"],
+                    ["parameter_name" => $this->pageParamName],
                     ["query" => "qs={$query}"]
                 )
             ];

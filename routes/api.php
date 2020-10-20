@@ -49,6 +49,7 @@ Route::group([ "prefix" => "admin" ], function () {
         });
         Route::group([ "prefix" => "defects" ], function () {
             Route::get("", "DefectsController@getDefects");
+            Route::get("search", "DefectsController@search");
             Route::group([ "prefix" => "defect" ], function () {
                 Route::post("", "DefectsController@createDefect");
                 Route::group([ "prefix" => "{defect}" ], function () {
@@ -60,6 +61,7 @@ Route::group([ "prefix" => "admin" ], function () {
         });
         Route::group([ "prefix" => "categories" ], function () {
             Route::get("", "CategoriesController@getRootCategories");
+            Route::get("search", "CategoriesController@search");
             Route::group([ "prefix" => "category" ], function () {
                 Route::post("{category?}", "CategoriesController@createCategory");
                 Route::group([ "prefix" => "{category}" ], function () {
@@ -71,6 +73,7 @@ Route::group([ "prefix" => "admin" ], function () {
         });
         Route::group([ "prefix" => "devices" ], function () {
             Route::get("", "DevicesController@getDevices");
+            Route::get("search", "DevicesController@search");
             Route::group([ "prefix" => "device" ], function() {
                Route::post("", "DevicesController@createDevice");
                Route::group([ "prefix" => "{device}" ], function () {
