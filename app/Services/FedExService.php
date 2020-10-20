@@ -3,9 +3,11 @@
 namespace App\Services;
 
 use FedEx\ShipService;
-use FedEx\ShipService\Request;
 use FedEx\ShipService\ComplexType;
 use FedEx\ShipService\SimpleType;
+use FedEx\TrackService\Request;
+use FedEx\TrackService\ComplexType as TrackServiceComplexType;
+use FedEx\TrackService\SimpleType as TrackServiceSimpleType;
 
 class FedExService
 {
@@ -122,5 +124,78 @@ class FedExService
 
         $shipService = new ShipService\Request();
         return $shipService->getProcessShipmentReply($processShipmentRequest)->toArray();
+    }
+
+    public function tracking($trackingNumber)
+    {
+        $trackRequest = new TrackServiceComplexType\TrackRequest();
+
+        $userCredential = new TrackServiceComplexType\WebAuthenticationCredential();
+        $userCredential->setKey(getenv('FEDEX_KEY'))
+            ->setPassword(getenv('FEDEX_PASSWORD'));
+
+        $clientDetail = new TrackServiceComplexType\ClientDetail();
+        $clientDetail
+            ->setAccountNumber(getenv('FEDEX_ACCOUNT_NUMBER'))
+            ->setMeterNumber(getenv('FEDEX_METER_NUMBER'));
+
+        $webAuthenticationDetail = new TrackServiceComplexType\WebAuthenticationDetail();
+        $webAuthenticationDetail->setUserCredential($userCredential);
+
+        $version = new TrackServiceComplexType\VersionId();
+        $version
+            ->setMajor(16)
+            ->setIntermediate(0)
+            ->setMinor(0)
+            ->setServiceId('trck');
+
+        $trackRequest->setWebAuthenticationDetail($webAuthenticationDetail);
+        $trackRequest->setClientDetail($clientDetail);
+        $trackRequest->setVersion($version);
+
+        $trackRequest->SelectionDetails = [new TrackServiceComplexType\TrackSelectionDetail()];
+
+        // For get all events
+        $trackRequest->ProcessingOptions = [TrackServiceSimpleType\TrackRequestProcessingOptionType::_INCLUDE_DETAILED_SCANS];
+
+        // Track shipment 1
+        $trackRequest->SelectionDetails[0]->PackageIdentifier->Value = $trackingNumber;
+        $trackRequest->SelectionDetails[0]->PackageIdentifier->Type = TrackServiceSimpleType\TrackIdentifierType::_TRACKING_NUMBER_OR_DOORTAG;
+
+        // $trackRequest
+        $request = new Request();
+        $result = $request->getTrackReply($trackRequest);
+
+//        var_dump($result->CompletedTrackDetails[0]->TrackDetails[0]);
+//        exit;
+        if (!isset($result) && !isset($result->CompletedTrackDetails[0])) {
+            return null;
+        }
+
+        if (!isset($result->CompletedTrackDetails[0]->TrackDetails[0]->Events)) {
+            return null;
+        }
+
+
+        $events = $result->CompletedTrackDetails[0]->TrackDetails[0]->Events;
+
+        $data = [];
+        foreach ($events as $event) {
+            $data[] = [
+                'timestamp' => (new \DateTime($event->Timestamp))->format('Y-m-d g:i a'),
+                'eventType' => $event->EventType,
+                'eventDescription' => $event->EventDescription,
+                'address' => [
+                    'city' => $event->Address->City,
+                    'stateOrProvinceCode' => $event->Address->StateOrProvinceCode,
+                    'postalCode' => $event->Address->PostalCode,
+                    'countryCode' => $event->Address->CountryCode,
+                    'countryName' => $event->Address->CountryName,
+                    'residential' => $event->Address->Residential
+                ]
+            ];
+        }
+
+        return $data;
     }
 }
