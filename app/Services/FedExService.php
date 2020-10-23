@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Services\SettingService as Config;
 use FedEx\ShipService;
 use FedEx\ShipService\ComplexType;
 use FedEx\ShipService\SimpleType;
@@ -11,20 +12,33 @@ use FedEx\TrackService\SimpleType as TrackServiceSimpleType;
 
 class FedExService
 {
+    private $fedExKey;
+    private $fedExPassword;
+    private $fedExAccountNumber;
+    private $fedExMeterNumber;
+
+    public function __construct()
+    {
+        $this->fedExKey = Config::getParameter("FEDEX_KEY");
+        $this->fedExPassword = Config::getParameter("FEDEX_PASSWORD");
+        $this->fedExAccountNumber = Config::getParameter("FEDEX_ACCOUNT_NUMBER");
+        $this->fedExMeterNumber = Config::getParameter("FEDEX_METER_NUMBER");
+    }
+
     public function shipment($shipmentDetails)
     {
         $userCredential = new ComplexType\WebAuthenticationCredential();
         $userCredential
-            ->setKey(getenv('FEDEX_KEY'))
-            ->setPassword(getenv('FEDEX_PASSWORD'));
+            ->setKey($this->fedExKey)
+            ->setPassword($this->fedExPassword);
 
         $webAuthenticationDetail = new ComplexType\WebAuthenticationDetail();
         $webAuthenticationDetail->setUserCredential($userCredential);
 
         $clientDetail = new ComplexType\ClientDetail();
         $clientDetail
-            ->setAccountNumber(getenv('FEDEX_ACCOUNT_NUMBER'))
-            ->setMeterNumber(getenv('FEDEX_METER_NUMBER'));
+            ->setAccountNumber($this->fedExAccountNumber)
+            ->setMeterNumber($this->fedExMeterNumber);
 
         $version = new ComplexType\VersionId();
         $version
@@ -50,7 +64,7 @@ class FedExService
 
         $shipper = new ComplexType\Party();
         $shipper
-            ->setAccountNumber(getenv('FEDEX_ACCOUNT_NUMBER'))
+            ->setAccountNumber($this->fedExAccountNumber)
             ->setAddress($shipperAddress)
             ->setContact($shipperContact);
 
@@ -131,13 +145,13 @@ class FedExService
         $trackRequest = new TrackServiceComplexType\TrackRequest();
 
         $userCredential = new TrackServiceComplexType\WebAuthenticationCredential();
-        $userCredential->setKey(getenv('FEDEX_KEY'))
-            ->setPassword(getenv('FEDEX_PASSWORD'));
+        $userCredential->setKey($this->fedExKey)
+            ->setPassword($this->fedExPassword);
 
         $clientDetail = new TrackServiceComplexType\ClientDetail();
         $clientDetail
-            ->setAccountNumber(getenv('FEDEX_ACCOUNT_NUMBER'))
-            ->setMeterNumber(getenv('FEDEX_METER_NUMBER'));
+            ->setAccountNumber($this->fedExAccountNumber)
+            ->setMeterNumber($this->fedExMeterNumber);
 
         $webAuthenticationDetail = new TrackServiceComplexType\WebAuthenticationDetail();
         $webAuthenticationDetail->setUserCredential($userCredential);
@@ -166,8 +180,6 @@ class FedExService
         $request = new Request();
         $result = $request->getTrackReply($trackRequest);
 
-//        var_dump($result->CompletedTrackDetails[0]->TrackDetails[0]);
-//        exit;
         if (!isset($result) && !isset($result->CompletedTrackDetails[0])) {
             return null;
         }

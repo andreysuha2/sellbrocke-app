@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Jobs\PaymentPayPalNotificationJob;
 use App\Jobs\PaymentCheckNotificationJob;
 use App\Models\Payment;
+use App\Models\Order;
+use App\Services\SettingService;
 use Illuminate\Http\Request;
 use League\Flysystem\Exception;
 use PayPal\Api\Payout;
@@ -15,33 +17,34 @@ use PayPal\Api\Currency;
 class PaymentController extends Controller
 {
     private $apiContext;
+    private $settings;
 
     public function __construct()
     {
+        $this->settings = SettingService::getParametersByGroup("payment");
+
         $this->apiContext = new \PayPal\Rest\ApiContext(
             new \PayPal\Auth\OAuthTokenCredential(
-                getenv('PAYPAL_CLIENT_ID'),
-                getenv('PAYPAL_CLIENT_SECRET')
+                $this->settings["PAYPAL_CLIENT_ID"],
+                $this->settings["PAYPAL_CLIENT_SECRET"]
             )
         );
     }
 
     public function payment(Request $request)
     {
-        // TODO: Replace dummy data and use order's data
-        $order = new \stdClass();
-        $order->customer = new \stdClass();
-        $order->customer->email = 'web.jungle@gmail.com';
-        $order->customer->first_name = 'Ben Hocks';
-        $order->customer->paypal_email = 'ben.hocks@gmail.com';
-        $order->prices = [
-            'discounted' => 205.00
-        ];
+        if (empty($request->orderId)) {
+            return response()->json([
+                "message" => "An order's identifier isn't received!"
+            ], 402);
+        }
 
-        $paymentDetails = (object) $request;
+        $order = Order::find($request->orderId);
 
-        if (empty($paymentDetails->email)) {
-            return null;
+        if (empty($order->customer->paypal_email)) {
+            return response()->json([
+                "message" => "The payment's email isn't received!"
+            ], 402);
         }
 
         $payouts = new Payout();
@@ -52,11 +55,11 @@ class PaymentController extends Controller
         $senderItem = new PayoutItem();
         $senderItem->setRecipientType('Email')
             ->setNote('Thanks for your package!')
-            ->setReceiver($paymentDetails->email)
-            ->setSenderItemId($paymentDetails->order_id)
+            ->setReceiver($order->customer->email)
+            ->setSenderItemId($order->id)
             ->setAmount(new Currency([
-                "value" => $paymentDetails->value,
-                "currency" => $paymentDetails->currency
+                "value" => $order->prices['discounted'],
+                "currency" => "USD"
             ]));
 
         $payouts->setSenderBatchHeader($senderBatchHeader)
@@ -67,11 +70,11 @@ class PaymentController extends Controller
             $result = (object) $output;
 
             $payment = new Payment();
-            $payment->order_id = $paymentDetails->order_id;
+            $payment->order_id = $order->id;
             $payment->payout_batch_id = $result->batch_header->payout_batch_id;
             $payment->sender_batch_id = $result->batch_header->sender_batch_header->sender_batch_id;
-            $payment->amount = $paymentDetails->value;
-            $payment->currency = $paymentDetails->currency;
+            $payment->amount = $order->prices['discounted'];
+            $payment->currency = "USD";
             $payment->status = $result->batch_header->batch_status;
             $payment->save();
 
