@@ -15,6 +15,7 @@ use App\Models\Order;
 use App\Models\OrderDevice;
 use App\Models\Shipment;
 use App\Services\FedExService;
+use App\Services\SettingService;
 use App\Services\UPSService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,6 +25,17 @@ use GuzzleHttp\Client;
 
 class OrdersController extends Controller
 {
+    private $upsShipperNumber;
+    private $commonSettings;
+    private $addressSettings;
+
+    public function __construct()
+    {
+        $this->upsShipperNumber = SettingService::getParameter("UPS_SHIPPER_NUMBER");
+        $this->commonSettings = SettingService::getParametersByGroup('common');
+        $this->addressSettings = SettingService::getParametersByGroup('address');
+    }
+
     public function getOrders(Customer $customer)
     {
         $orders = $customer->orders()->paginate(10);
@@ -43,7 +55,7 @@ class OrdersController extends Controller
             ["status" => "pending", "confirmation_key" => Str::random(32)],
             $request->toArray()
         ));
-        $shippingData = $this->createShipment($request);
+        $shippingData = $this->createShipment($customer, $request);
         $shipping = $order->shipment()->create($shippingData);
         $shipping->storeLabel($shippingData["label"]);
         collect($request->devices)->each(function ($deviceData) use ($order) {
@@ -106,42 +118,42 @@ class OrdersController extends Controller
         ], 200);
     }
 
-    private function createShipment(Request $request)
+    private function createShipment(Customer $customer, Request $request)
     {
         if($request->shipment["type"] === "UPS") {
             $shipping = new UPSService(new Client());
             $query = [
                 "ShipmentRequest" => [
                     "Shipment" => [
-                        "Description" => $request->shipment["description"] ?? "test",
+                        "Description" => $request->shipment["description"] ?? "Electronic devices",
                         "Shipper" => [
-                            "Name" => "Sellbroke",
-                            "AttentionName" => "Sellbroke",
+                            "Name" => "{$customer->first_name} {$customer->last_name}",
+                            "AttentionName" => "{$customer->first_name} {$customer->last_name}",
                             "Phone" => [
-                                "Number" => "1234567890"
+                                "Number" => $customer->phone
                             ],
-                            "ShipperNumber" => env("UPS_SHIPPER_NUMBER"),
+                            "ShipperNumber" => $this->upsShipperNumber,
                             "Address" => [
-                                "AddressLine" => "Saks Fifth Avenue‎",
-                                "City" => "New York",
-                                "StateProvinceCode" => "NY",
-                                "PostalCode" => "10001",
+                                "AddressLine" => $customer->address,
+                                "City" => $customer->city,
+                                "StateProvinceCode" => $customer->state,
+                                "PostalCode" => $customer->zip,
                                 "CountryCode" => "US"
                             ]
                         ],
                         "ShipTo" => [
-                            "Name" => "ShipToName",
-                            "AttentionName" => "AttentionName",
+                            "Name" => $this->commonSettings["RECEIVER_NAME"],
+                            "AttentionName" => $this->commonSettings["RECEIVER_ATTENTION_NAME"],
                             "Phone" => [
-                                "Number" => "1234567890"
+                                "Number" => $this->commonSettings["OFFICE_PHONE"]
                             ],
-                            "FaxNumber" => "1234567999",
+                            "FaxNumber" => $this->commonSettings["OFFICE_FAX"],
                             "Address" => [
-                                "AddressLine" => "Sixth Avenue",
-                                "City" => "New York",
-                                "StateProvinceCode" => "NY",
-                                "PostalCode" => "10001",
-                                "CountryCode" => "US"
+                                "AddressLine" => $this->addressSettings["OFFICE_ADDRESS_LINE"],
+                                "City" => $this->addressSettings["OFFICE_CITY"],
+                                "StateProvinceCode" => $this->addressSettings["OFFICE_STATE"],
+                                "PostalCode" => $this->addressSettings["OFFICE_POSTAL_CODE"],
+                                "CountryCode" => $this->addressSettings["OFFICE_COUNTRY"]
                             ]
                         ],
                         "ShipFrom" => $request->shipment["shipFrom"],
@@ -149,7 +161,7 @@ class OrdersController extends Controller
                             "ShipmentCharge" => [
                                 "Type" => "01",
                                 "BillShipper" => [
-                                    "AccountNumber" => env("UPS_SHIPPER_NUMBER")
+                                    "AccountNumber" => $this->upsShipperNumber
                                 ]
                             ]
                         ],
@@ -187,15 +199,15 @@ class OrdersController extends Controller
                 'shipperAddress' => $request->shipment["shipperAddress"],
                 'shipperContact' => $request->shipment["shipperContact"],
                 'recipientAddress' => [
-                    'line1' => 'Address Line 1',
-                    'city' => 'Herndon',
-                    'state_code' => 'VA',
-                    'postal_code' => '20171',
-                    'country_code' => 'US'
+                    'line1' => $this->addressSettings["OFFICE_ADDRESS_LINE"],
+                    'city' => $this->addressSettings["OFFICE_CITY"],
+                    'state_code' => $this->addressSettings["OFFICE_STATE"],
+                    'postal_code' => $this->addressSettings["OFFICE_POSTAL_CODE"],
+                    'country_code' => $this->addressSettings["OFFICE_COUNTRY"]
                 ],
                 'recipientContact' => [
-                    'person_name' => 'Person Name',
-                    'phone' => '1234567890',
+                    'person_name' => $this->commonSettings["RECEIVER_ATTENTION_NAME"],
+                    'phone' => $this->commonSettings["OFFICE_PHONE"],
                 ],
                 'package' => [
                     'weight' => [

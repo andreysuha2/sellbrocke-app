@@ -104,6 +104,11 @@ Route::group([ "prefix" => "admin" ], function () {
                 Route::get("order-reminder", "OrdersController@orderReminder");
             });
         });
+
+        Route::group([ "prefix" => "settings" ], function() {
+            Route::get("/{group}", "SettingController@getGroup");
+            Route::post("/store", "SettingController@store");
+        });
     });
 });
 
