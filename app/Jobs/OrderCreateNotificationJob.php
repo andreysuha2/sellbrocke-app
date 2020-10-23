@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Mail\OrderConfirmation;
 use App\Mail\OrderMail;
+use App\Services\SettingService as Config;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -17,6 +18,7 @@ class OrderCreateNotificationJob implements ShouldQueue
 
     protected $order;
     protected $customer;
+    private $adminEmail;
 
     /**
      * Create a new job instance.
@@ -27,6 +29,7 @@ class OrderCreateNotificationJob implements ShouldQueue
     {
         $this->order = $order;
         $this->customer = $customer;
+        $this->adminEmail = Config::getParameter('ADMIN_EMAIL');
     }
 
     /**
@@ -36,7 +39,7 @@ class OrderCreateNotificationJob implements ShouldQueue
      */
     public function handle()
     {
-        Mail::to('admin@sellbroke.com')->queue(new OrderMail($this->order));
+        Mail::to($this->adminEmail)->queue(new OrderMail($this->order));
         Mail::to($this->customer->email)->queue(new OrderConfirmation($this->order));
     }
 }

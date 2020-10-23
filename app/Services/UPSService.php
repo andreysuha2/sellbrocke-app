@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Interfaces\UPSInterface;
+use App\Services\SettingService as Config;
 use Illuminate\Support\Facades\Http;
 use GuzzleHttp\Client;
 use League\Flysystem\Exception;
@@ -15,12 +16,16 @@ class UPSService implements UPSInterface
     private $userPassword;
     protected $http;
     protected $headers;
+    protected $settings;
+    protected $upsUrl;
 
     public function __construct(Client $client)
     {
-        $this->accessKey = getenv("UPS_ACCESS_KEY");
-        $this->userID = getenv("UPS_USER_ID");
-        $this->userPassword = getenv("UPS_PASSWORD");
+        $this->settings = Config::getParametersByGroup('ups');
+        $this->accessKey = $this->settings["UPS_ACCESS_KEY"];
+        $this->userID = $this->settings["UPS_USER_ID"];
+        $this->userPassword = $this->settings["UPS_PASSWORD"];
+        $this->upsUrl = $this->settings["UPS_SANDBOX"] ? $this->settings["UPS_SANDBOX_URL"] : $this->settings["UPS_PRODUCTION_URL"];
         $this->http = $client;
 
         $this->headers = [
@@ -29,7 +34,7 @@ class UPSService implements UPSInterface
             'AccessLicenseNumber' => $this->accessKey,
             'Username' => $this->userID,
             'Password' => $this->userPassword,
-            'transId' => 'Transaction123',
+            'transId' => uniqid() . rand(10, 99),
             'transactionSrc' => 'GG'
         ];
     }
@@ -56,7 +61,7 @@ class UPSService implements UPSInterface
 
     public function shipment($shipmentDetails)
     {
-        $url = env('UPS_URL') . '/ship/v1/shipments?additionaladdressvalidation=city';
+        $url = $this->upsUrl . '/ship/v1/shipments?additionaladdressvalidation=city';
 
         return $this->request($url, $shipmentDetails);
     }
@@ -67,7 +72,7 @@ class UPSService implements UPSInterface
             return null;
         }
 
-        $url = env('UPS_URL') . "/ship/v1/shipments/cancel/{$shipmentIdentificationNumber}";
+        $url = $this->upsUrl . "/ship/v1/shipments/cancel/{$shipmentIdentificationNumber}";
 
         $response = Http::withHeaders(
             $this->headers
@@ -90,14 +95,14 @@ class UPSService implements UPSInterface
 
     public function label($shipmentDetails)
     {
-        $url = env('UPS_URL') . '/ship/v1/shipments/labels';
+        $url = $this->upsUrl . '/ship/v1/shipments/labels';
 
         return $this->request($url, $shipmentDetails);
     }
 
     public function tracking($trackingNumber)
     {
-        $url = env('UPS_URL') . "/track/v1/details/{$trackingNumber}";
+        $url = $this->upsUrl . "/track/v1/details/{$trackingNumber}";
 
         $response = Http::withHeaders(
             $this->headers
