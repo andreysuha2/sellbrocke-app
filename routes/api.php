@@ -109,6 +109,9 @@ Route::group([ "prefix" => "admin" ], function () {
             Route::get("/{group}", "SettingController@getGroup");
             Route::post("/store", "SettingController@store");
         });
+
+        Route::post('/payment', 'PaymentController@payment');
+        Route::post('/payment-check', 'PaymentController@paymentCheck');
     });
 });
 
@@ -137,6 +140,3 @@ Route::group([ "middleware" => "auth:api-merchants", 'prefix' => 'merchants', 'n
 
     Route::post("shipment", "OrdersController@setShipmentStatus");
 });
-
-Route::post('/payment', 'PaymentController@payment');
-Route::post('/payment-check', 'PaymentController@paymentCheck');

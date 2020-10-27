@@ -29,10 +29,16 @@ class OrderDevice extends Model
     }
 
     public function getDiscountedPriceAttribute() {
+        // First thing first we need to get device price сonsidering the company reducing percents.
+        $companyReductionRatio = (100 - $this->device->company->price_reduction) / 100;
+        $discountedAmount = round($this->device->base_price * $companyReductionRatio, 2);
+
         $defectsPriceReduction = $this->defects->sum("price_reduction");
-        $discountedPercent = $this->device->company->price_reduction + $defectsPriceReduction + $this->condition->discount_percent;
-        $ratio = (100 - $discountedPercent) / 100;
-        $price = round($this->device->base_price * $ratio, 2);
-        return $price > 0 ? $price : 0;
+        // All defects percents amount + condition percents
+        $discountedPercent = $defectsPriceReduction + $this->condition->discount_percent;
+        $defectsConditionRatio = (100 - $discountedPercent) / 100;
+        $totalAmount = round($discountedAmount * $defectsConditionRatio, 2);
+
+        return $totalAmount > 0 ? $totalAmount : 0;
     }
 }
