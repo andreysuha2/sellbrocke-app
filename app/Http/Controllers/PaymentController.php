@@ -55,7 +55,7 @@ class PaymentController extends Controller
         $senderItem = new PayoutItem();
         $senderItem->setRecipientType('Email')
             ->setNote('Thanks for your package!')
-            ->setReceiver($order->customer->email)
+            ->setReceiver($order->customer->paypal_email)
             ->setSenderItemId($order->id)
             ->setAmount(new Currency([
                 "value" => $order->prices['discounted'],
@@ -103,28 +103,25 @@ class PaymentController extends Controller
         $payment->save();
     }
 
-    public function paymentCheck()
+    public function paymentCheck(Request $request)
     {
-        try {
-            // TODO: Replace dummy data and use order's data
-            $order = new \stdClass();
-            $order->customer = new \stdClass();
-            $order->customer->email = 'web.jungle@gmail.com';
-            $order->customer->first_name = 'John';
-            $order->customer->last_name = 'Doe';
-            $order->customer->paypal_email = 'john.doe@gmail.com';
-            $order->customer->address = 'Sixth Avenue';
-            $order->customer->city = 'New York';
-            $order->customer->state = 'NY';
-            $order->customer->zip = '10001';
-            $order->prices = [
-                'discounted' => 350.00
-            ];
+        if (empty($request->orderId)) {
+            return response()->json([
+                "message" => "An order's identifier isn't received!"
+            ], 402);
+        }
 
+        $order = Order::find($request->orderId);
+
+        try {
             dispatch(new PaymentCheckNotificationJob($order));
         } catch (Exception $e) {
             echo $e->getMessage();
             exit;
         }
+
+        return response()->json([
+            "message" => "The notification of the payment by check was successfully put to queue and wait to send to the customer!"
+        ], 200);
     }
 }
