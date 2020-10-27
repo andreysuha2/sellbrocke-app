@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 use App\Models\Category;
+use App\Models\Company;
 use App\Models\Device;
 use App\Models\SearchSlug;
 
@@ -49,6 +50,14 @@ class DeviceObserver
     }
 
     public function updating(Device $device) {
+        if ($device->company_id !== $device->getOriginal("company_id")) {
+            $device->searchSlugs->each(function ($searchSlug) use ($device) {
+                $company = Company::find($device->company_id);
+                $searchSlug->company_part = $company->slug;
+                $searchSlug->save();
+            });
+        }
+
         if($device->slug !== $device->getOriginal("slug")) {
             $device->searchSlugs->each(function ($searchSlug) use ($device) {
                 $searchSlug->device_part = $device->slug;
