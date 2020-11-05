@@ -140,3 +140,6 @@ Route::group([ "middleware" => "auth:api-merchants", 'prefix' => 'merchants', 'n
 
     Route::post("shipment", "OrdersController@setShipmentStatus");
 });
+
+Route::get("import-companies", "ImportController@importCompanies");
+Route::get("import-devices", "ImportController@importDevices");
