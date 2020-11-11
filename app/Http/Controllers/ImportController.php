@@ -137,4 +137,71 @@ class ImportController extends Controller
 
         return response()->json(['status' => 'ok', 'count' => $counter]);
     }
+
+    public function importClassic()
+    {
+        $devices = DB::select(
+            "SELECT `d`.`id`, `d`.`name`, `d`.`slug`, `ipod_classic_sizes`, `pg`.`id` AS `pg_id`, `pg`.`name`
+            FROM `devices` AS `d`
+            LEFT JOIN `_devices` AS `_d` ON `d`.`slug` = `_d`.`slug`
+            LEFT JOIN `products_grids` AS `pg` ON `_d`.`ipod_classic_sizes` = `pg`.`name`
+            WHERE `ipod_classic_sizes` <> ''"
+        );
+
+        foreach ($devices as $item) {
+            $device = Device::find($item->id);
+            $device->productsGrids()->sync([155, $item->pg_id]);
+        }
+
+        return response()->json(['status' => 'ok']);
+    }
+
+    public function importNano()
+    {
+        $devices = DB::select(
+            "SELECT `d`.`id`, `d`.`name`, `d`.`slug`, `ipod_nano_sizes`, `pg`.`id` AS `pg_id`, `pg`.`name`
+            FROM `devices` AS `d`
+            LEFT JOIN `_devices` AS `_d` ON `d`.`slug` = `_d`.`slug`
+            LEFT JOIN `products_grids` AS `pg` ON `_d`.`ipod_nano_sizes` = `pg`.`name`
+            WHERE `ipod_nano_sizes` <> ''"
+        );
+
+        foreach ($devices as $item) {
+            $device = Device::find($item->id);
+            $device->use_products_grids = 1;
+            $device->save();
+            $device->productsGrids()->sync([155, $item->pg_id]);
+        }
+
+        return response()->json(['status' => 'ok']);
+    }
+
+    public function importIOS()
+    {
+        $devices = DB::select(
+            "SELECT `d`.`id`, `d`.`name`, `d`.`slug`, `ios_sizes`, `pg`.`id` AS `pg_id`, `pg`.`name`, `pg2`.`id` AS `carrier_id`, `pg2`.`name` AS `carrier` 
+            FROM `devices` AS `d`
+            LEFT JOIN `_devices` AS `_d` ON `d`.`slug` = `_d`.`slug`
+            LEFT JOIN `products_grids` AS `pg` ON `_d`.`ios_sizes` = `pg`.`name`
+            LEFT JOIN `products_grids` AS `pg2` ON `_d`.`carriers` = `pg2`.`name`
+            WHERE `ios_sizes` <> '' AND `carriers` <> '';"
+        );
+
+        $counter = 0;
+        foreach ($devices as $item) {
+            $device = Device::find($item->id);
+            $device->use_products_grids = 1;
+            $device->save();
+
+            if (is_null($item->carrier_id)) {
+                $device->productsGrids()->sync([155, $item->pg_id]);
+            } else {
+                $device->productsGrids()->sync([$item->carrier_id, $item->pg_id]);
+            }
+
+            $counter++;
+        }
+
+        return response()->json(['status' => 'ok', 'count' => $counter]);
+    }
 }

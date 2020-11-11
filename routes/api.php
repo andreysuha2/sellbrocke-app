@@ -144,3 +144,6 @@ Route::group([ "middleware" => "auth:api-merchants", 'prefix' => 'merchants', 'n
 Route::get("import-companies", "ImportController@importCompanies");
 Route::get("import-devices", "ImportController@importDevices");
 Route::get("import-images", "ImportController@importImages");
+Route::get("import-classic", "ImportController@importClassic");
+Route::get("import-nano", "ImportController@importNano");
+Route::get("import-ios", "ImportController@importIOS");
