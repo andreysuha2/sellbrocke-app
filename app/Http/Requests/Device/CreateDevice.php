@@ -24,7 +24,7 @@ class CreateDevice extends FormRequest
     public function rules()
     {
         return [
-            "thumbnail" => "required|image|max:100",
+            "thumbnail" => "required|image|max:300",
             "name" => "required",
             "base_price" => "required|numeric",
             "company" => "required|exists:companies,id",

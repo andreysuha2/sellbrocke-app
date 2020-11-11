@@ -57,8 +57,11 @@ class DevicesController extends Controller
         }
         if($request->has("detach_categories")) $device->categories()->detach($request->detach_categories);
         if($request->has("attach_categories")) $device->categories()->attach($request->attach_categories);
-        if(!$device->use_products_grids) $device->productsGrids()->detach();
-        else $device->productsGrids()->sync($request->products_grids);
+        if(!$device->use_products_grids) {
+            $device->productsGrids()->detach();
+        } else if ($request->has("products_grids")) {
+            $device->productsGrids()->sync($request->products_grids);
+        }
         $this->attachThumbnail($device, $request);
         return new DeviceResource($device);
     }
