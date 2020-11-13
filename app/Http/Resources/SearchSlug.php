@@ -13,7 +13,6 @@ use App\Http\Resources\Devices\DevicePage as DevicePageResource;
 use App\Http\Resources\Devices\DevicesPageCollection;
 use App\Http\Resources\Companies\CompaniesPagesCollection;
 use App\Http\Resources\Categories\CategoriesPageCollection;
-use App\Http\Resources\ProductsGrids\ProductGridCollection;
 use Illuminate\Pagination\Paginator;
 
 class SearchSlug extends JsonResource
@@ -128,16 +127,8 @@ class SearchSlug extends JsonResource
 
     private function getDeviceData($item) {
         $result = [];
-        if($item->use_products_grids && (!$this->request->has("carrier") || !$this->request->has("size"))) {
-            $result["item"] = new DevicePageResource($item);
-            $result["pageListType"] = "productsGrids";
-            $sizes = $item->productsGrids->filter(function ($productGrid) { return $productGrid->type === "size"; });
-            $carriers = $item->productsGrids->filter(function ($productGrid) { return $productGrid->type === "carrier"; });
-            $result["list"] = [
-                "sizes" => isset($sizes) && count($sizes) ? new ProductGridCollection($sizes) : null,
-                "carriers" => isset($carriers) && count($carriers) ? new ProductGridCollection($carriers) : null
-            ];
-        } elseif($item) {
+
+        if ($item) {
             $size = $item->use_products_grids ? $this->request->size : null;
             $carrier = $item->use_products_grids ? $this->request->carrier: null;
             $result["item"] = new DevicePageResource($item, $size, $carrier);
@@ -145,6 +136,7 @@ class SearchSlug extends JsonResource
             $result["list"] = new DefectsCollection($item->defects()->get());
             $result["conditions"] = new ConditionCollection(Condition::all());
         }
+
         return $result;
     }
 }
