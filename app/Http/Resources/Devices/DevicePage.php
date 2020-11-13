@@ -1,9 +1,9 @@
 <?php
 
 namespace App\Http\Resources\Devices;
-use App\Http\Resources\ProductsGrids\ProductGrid as ProductGridResource;
 
-use App\Http\Resources\ProductsGrids\ProductGrid;
+use App\Http\Resources\ProductsGrids\ProductGrid as ProductGridResource;
+use App\Http\Resources\ProductsGrids\ProductGridCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class DevicePage extends JsonResource
@@ -36,14 +36,18 @@ class DevicePage extends JsonResource
         $thumbnailRecord = $this->attachment("thumbnail");
         $thumbnailPath = $thumbnailRecord ? $thumbnailRecord->url : null;
         if($this->withProductsGrids) {
-            $name = $this->name . " " . $this->size->name . " (" . $this->carrier->name . ")";
             $this->size = new ProductGridResource($this->size);
             $this->carrier = new ProductGridResource($this->carrier);
-        } else $name = $this->name;
+        }
+
+        if($this->use_products_grids) {
+            $sizes = $this->productsGrids->filter(function ($productGrid) { return $productGrid->type === "size"; });
+            $carriers = $this->productsGrids->filter(function ($productGrid) { return $productGrid->type === "carrier"; });
+        }
 
         return [
             "id" => $this->id,
-            "name" => $name,
+            "name" => $this->name,
             "prices" => [
                 "base" => (float) $this->base_price,
                 "discounted" => $this->getDiscounted()
@@ -53,7 +57,11 @@ class DevicePage extends JsonResource
             "company" => $this->company,
             "mainSlug" => $this->categories[0]->slug . "/" . $this->company->slug . "/" . $this->slug,
             "description" => $this->description,
-            "productsGrids" => $this->when($this->withProductsGrids, [ "size" => $this->size, "carrier" => $this->carrier ])
+            "productsGrids" => $this->when($this->withProductsGrids, [ "size" => $this->size, "carrier" => $this->carrier ]),
+            "productsGridsList" => $this->when($this->use_products_grids, [
+                "sizes" => isset($sizes) && count($sizes) ? new ProductGridCollection($sizes) : null,
+                "carriers" => isset($carriers) && count($carriers) ? new ProductGridCollection($carriers) : null
+            ])
         ];
     }
 

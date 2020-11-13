@@ -4,7 +4,6 @@ namespace App\Http\Requests\Order;
 
 use App\Models\Device;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Log;
 
 class CreateOrder extends FormRequest
 {
@@ -64,7 +63,6 @@ class CreateOrder extends FormRequest
             "devices.*" => [ function($attribute, $value, $fail) {
                 $device = Device::find($value["id"]);
                 if($device) {
-                    $this->checkProductsGrid($device, $value, $fail, $attribute);
                     if(isset($value["defects"])) $this->checkDefects($device, $value, $fail, $attribute);
                 }
             } ],

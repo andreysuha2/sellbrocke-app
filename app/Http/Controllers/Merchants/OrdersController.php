@@ -67,9 +67,6 @@ class OrdersController extends Controller
             $orderDevice->condition()->associate($condition);
             $orderDevice->save();
             if(isset($deviceData["defects"])) $orderDevice->defects()->attach($deviceData["defects"]);
-            if($device->use_products_grids && isset($deviceData["productsGrids"])) {
-                $orderDevice->products_grids()->attach($deviceData["productsGrids"]);
-            }
         });
 
         dispatch(new OrderCreateNotificationJob($order, $customer));

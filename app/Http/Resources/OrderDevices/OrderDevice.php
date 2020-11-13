@@ -21,11 +21,6 @@ class OrderDevice extends JsonResource
     {
         $productsGrids = $this->device->use_products_grids ? new ProductGridCollection($this->products_grids) : null;
         $name = $this->device->name;
-        if($productsGrids) {
-            $size = $productsGrids->firstWhere("type", "size");
-            $carrier = $productsGrids->firstWhere("type", "carrier");
-            $name = $name . " " . $size->name . " (" . $carrier->name . ")";
-        }
         $thumbnailRecord = $this->device->attachment("thumbnail");
         $thumbnailPath = $thumbnailRecord ? $thumbnailRecord->url : null;
 
