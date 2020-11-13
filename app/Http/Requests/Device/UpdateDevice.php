@@ -26,7 +26,7 @@ class UpdateDevice extends FormRequest
         $deviceId = $this->route("device")->id;
 
         return [
-            "thumbnail" => "sometimes|required|image|max:100",
+            "thumbnail" => "sometimes|required|image|max:300",
             "name" => "sometimes|required",
             "base_price" => "sometimes|required|numeric",
             "company" => "sometimes|required|exists:companies,id",
