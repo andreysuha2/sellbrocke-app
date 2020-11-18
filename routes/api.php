@@ -138,5 +138,6 @@ Route::group([ "middleware" => "auth:api-merchants", 'prefix' => 'merchants', 'n
         });
     });
 
+    Route::get("settings/{group}", "SettingController@getGroup");
     Route::post("shipment", "OrdersController@setShipmentStatus");
 });

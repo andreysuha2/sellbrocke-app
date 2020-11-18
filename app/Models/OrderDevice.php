@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Services\SettingService;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class OrderDevice extends Model
 {
@@ -29,15 +31,29 @@ class OrderDevice extends Model
     }
 
     public function getDiscountedPriceAttribute() {
+        $quotes = SettingService::getParametersByGroup("quotes");
+
         // First thing first we need to get device price сonsidering the company reducing percents.
         $companyReductionRatio = (100 - $this->device->company->price_reduction) / 100;
         $discountedAmount = round($this->device->base_price * $companyReductionRatio, 2);
 
-        $defectsPriceReduction = $this->defects->sum("price_reduction");
-        // All defects percents amount + condition percents
-        $discountedPercent = $defectsPriceReduction + $this->condition->discount_percent;
-        $defectsConditionRatio = (100 - $discountedPercent) / 100;
-        $totalAmount = round($discountedAmount * $defectsConditionRatio, 2);
+        if ($discountedAmount >= $quotes["MAXIMUM_BASE_PRICE"]) {
+            $totalAmount = $quotes["FIXED_PRICE"];
+        } else {
+            $defectsPriceReduction = $this->defects->sum("price_reduction");
+            if (count($this->defects) === 3) {
+                $defectsPriceReduction = $defectsPriceReduction - $quotes["THREE_DEFECTS_REDUCE_PERCENT"];
+            }
+
+            if (count($this->defects) >= 4) {
+                $defectsPriceReduction = $defectsPriceReduction - $quotes["FOUR_DEFECTS_REDUCE_PERCENT"];
+            }
+
+            // All defects percents amount + condition percents
+            $discountedPercent = $defectsPriceReduction + $this->condition->discount_percent;
+            $defectsConditionRatio = (100 - $discountedPercent) / 100;
+            $totalAmount = round($discountedAmount * $defectsConditionRatio, 2);
+        }
 
         return $totalAmount > 0 ? $totalAmount : 0;
     }
