@@ -21,9 +21,10 @@ class DevicesController extends Controller
         $this->itemsPerPage = env('DASHBOARD_ITEMS_PER_PAGE');
     }
 
-    public function getDevices()
+    public function getDevices(Request $request)
     {
-        $devices = Device::orderBy("id", "desc")->paginate(10);
+        if(empty($request->qs)) $devices = Device::orderBy("id", "desc")->paginate($this->itemsPerPage);
+        else $devices = $this->search($request);
         $companies = Company::select("id", "name")->get();
         $categories = Category::whereIsLeaf()->select("id", "name")->get();
         $productsGrids = ProductGrid::select("id", "name", "type")->get();
@@ -124,6 +125,6 @@ class DevicesController extends Controller
             }
         }
 
-        return new DevicesCollection($devices);
+        return $devices;
     }
 }
