@@ -29,7 +29,6 @@ class CustomersController extends Controller
 
         $query = trim($request->qs);
         $separatorPos = stripos($query, ' ');
-        $customers = null;
 
         if ($separatorPos > 0) {
             $firstPart = substr($query, 0, $separatorPos);
@@ -43,7 +42,7 @@ class CustomersController extends Controller
 
         } else {
             if (filter_var($query, FILTER_VALIDATE_EMAIL)) {
-                $customers = Customer::where('email', 'LIKE', "%{$query}%")->paginate($this->itemsPerPage);
+                $customers = Customer::where('email', $query)->paginate($this->itemsPerPage);
             } else {
                 $customers = Customer::where('first_name', 'LIKE', "%{$query}%")
                     ->orWhere('last_name', 'LIKE', "%{$query}%")
@@ -51,6 +50,6 @@ class CustomersController extends Controller
             }
         }
 
-        return $customers;
+        return (new CustomersCollection($customers))->response()->getData(true);
     }
 }
