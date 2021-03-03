@@ -99,6 +99,7 @@ Route::group([ "prefix" => "admin" ], function () {
         });
         Route::group([ "prefix" => "orders" ], function() {
             Route::get("", "OrdersController@getOrders");
+            Route::get("search", "OrdersController@search");
             Route::group([ "prefix" => "order/{order}" ], function () {
                 Route::get("", "OrdersController@getOrder");
                 Route::put("status", "OrdersController@updateOrderStatus");
