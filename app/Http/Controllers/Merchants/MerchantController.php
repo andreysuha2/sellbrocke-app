@@ -52,6 +52,7 @@ class MerchantController extends Controller
                     // Get devices which are matching to the second part of the query
                     $devicesRaw = Device::where('name', 'like', "%{$secondPart}%")
                         ->whereIn('company_id', $companies)
+                        ->orderBy('id', 'desc')
                         ->paginate($this->itemsPerPage)
                         ->setPageName($this->pageParamName);
                 } else {
@@ -63,11 +64,13 @@ class MerchantController extends Controller
                         // Get devices which are matching to the first word in the search query
                         $devicesRaw = Device::where('name', 'like', "%{$firstPart}%")
                             ->whereIn('company_id', $companies)
+                            ->orderBy('id', 'desc')
                             ->paginate($this->itemsPerPage)
                             ->setPageName($this->pageParamName);
                     } else {
                         // Else try to get devices which are matching to whole query string
                         $devicesRaw = Device::where('name', 'like', "%{$query}%")
+                            ->orderBy('id', 'desc')
                             ->paginate($this->itemsPerPage)
                             ->setPageName($this->pageParamName);
                     }
@@ -80,11 +83,13 @@ class MerchantController extends Controller
                 if (count($companies) > 0) {
                     // Get all devices of these companies
                     $devicesRaw = Device::whereIn('company_id', $companies)
+                        ->orderBy('id', 'desc')
                         ->paginate($this->itemsPerPage)
                         ->setPageName($this->pageParamName);
                 } else {
                     // Else get devices which are matching to the query string
                     $devicesRaw = Device::where('name', 'like', "%{$query}%")
+                        ->orderBy('id', 'desc')
                         ->paginate($this->itemsPerPage)
                         ->setPageName($this->pageParamName);
                 }
@@ -112,8 +117,9 @@ class MerchantController extends Controller
             return response()->json($result);
 
         } else {
-            $searchSlug = SearchSlug::where("slug", $queryString)->firstOrFail();
+            $searchSlug = SearchSlug::where("slug", $queryString)->orderBy('id', 'desc')->firstOrFail();
             SearchSlugResource::withoutWrapping();
+
             return new SearchSlugResource($searchSlug, $request);
         }
     }
