@@ -117,7 +117,9 @@ class MerchantController extends Controller
             return response()->json($result);
 
         } else {
-            $searchSlug = SearchSlug::where("slug", $queryString)->orderBy('id', 'desc')->firstOrFail();
+            $searchSlug = SearchSlug::where("slug", $queryString)
+                ->orWhere('device_part', $queryString)
+                ->firstOrFail();
             SearchSlugResource::withoutWrapping();
 
             return new SearchSlugResource($searchSlug, $request);

@@ -117,8 +117,9 @@ class SearchSlug extends JsonResource
         $result["pageListType"] = "devices";
         $devices = $item->devices()->whereHas("categories", function ($query) use ($searchCategory) {
             $query->where("categories.id", $searchCategory->search_id);
-        })->paginate($this->perPageCount)
-          ->setPageName($this->pageParamName);
+        })->orderBy('id', 'desc')
+            ->paginate($this->perPageCount)
+            ->setPageName($this->pageParamName);
         $devicesData = (new DevicesPageCollection($devices))->response()->getData(true);
         $result["list"] = $devicesData["data"];
         $result["paginator"] = $devicesData["meta"];
