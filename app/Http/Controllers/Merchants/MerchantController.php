@@ -10,6 +10,7 @@ use App\Models\Category;
 use App\Models\Company;
 use App\Models\Device;
 use App\Models\SearchSlug;
+use App\Models\SerialNumber;
 use Illuminate\Http\Request;
 use App\Http\Resources\Merchants\Merchant as MerchantResource;
 use Illuminate\Support\Facades\Auth;
@@ -183,6 +184,48 @@ class MerchantController extends Controller
 
             return new SearchSlugResource($searchSlug, $request);
         }
+    }
+
+    public function searchBySerialNumber($serialNumber)
+    {
+        if (empty($serialNumber)) {
+            return false;
+        }
+
+        $devices = [];
+        $sn = null;
+        $serialNumber = SerialNumber::where('number', $serialNumber)->first();
+
+        if (!is_null($serialNumber)) {
+            $sn = $serialNumber->number;
+            $salesNumbers = $serialNumber->salesNumbers;
+
+            $devicesRaw = Device::where(function ($query) use ($salesNumbers) {
+                for ($i = 0; $i < count($salesNumbers); $i++) {
+                    $query->orWhere('name', 'like', '%' . $salesNumbers[$i]->number . '%');
+                }
+            })->orderBy('id', 'desc')
+            ->paginate($this->itemsPerPage)
+            ->setPageName($this->pageParamName);
+
+            $devices = (new DevicesPageCollection($devicesRaw))->response()->getData(true);
+        }
+
+        $resultSet = [
+            'parts' => [
+                'category' => 'apple-devices',
+                'company' => 'apple',
+                'devices' => null
+            ],
+            'list' => !empty($devices['data']) ? $devices['data'] : [],
+            'listType' => 'devices',
+            "paginator" => array_merge(
+                !empty($devices["meta"]) ? $devices['meta'] : [],
+                ["parameter_name" => $this->pageParamName],
+                ["query" => "serial_number={$sn}"]
+            )
+        ];
+        return response()->json($resultSet);
     }
 
 }
