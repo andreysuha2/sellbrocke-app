@@ -125,6 +125,6 @@ class DevicesController extends Controller
             }
         }
 
-        return $devices;
+        return (new DevicesCollection($devices))->response()->getData(true);
     }
 }
