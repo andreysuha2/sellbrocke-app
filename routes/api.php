@@ -129,6 +129,7 @@ Route::group([ "middleware" => "auth:api-merchants", 'prefix' => 'merchants', 'n
     Route::post("auto-registration-email", "CustomerController@autoRegistrationEmail");
 
     Route::get("search/{query?}", "MerchantController@search")->where("query", "(.*)");
+    Route::get("search-by-serial/{serialNumber?}", "MerchantController@searchBySerialNumber")->where("serialNumber", "(.*)");
     Route::group([ "prefix" => "orders/{merchant_customer}" ], function () {
         Route::get("/", "OrdersController@getOrders");
         Route::put("update-status", "OrdersController@updateOrderStatus");

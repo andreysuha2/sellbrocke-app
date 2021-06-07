@@ -18,19 +18,19 @@ class Device extends Model
     protected $hidden = [ "company_id" ];
 
     public function company() {
-        return $this->belongsTo("App\Models\Company", "company_id");
+        return $this->belongsTo('App\Models\Company', "company_id");
     }
 
     public function categories() {
-        return $this->belongsToMany("App\Models\Category", "category_device", "device_id", "category_id");
+        return $this->belongsToMany('App\Models\Category', "category_device", "device_id", "category_id");
     }
 
     public function productsGrids() {
-        return $this->belongsToMany("App\Models\ProductGrid", "device_product_grid", "device_id", "product_grid_id");
+        return $this->belongsToMany('App\Models\ProductGrid', "device_product_grid", "device_id", "product_grid_id");
     }
 
     public function searchSlugs() {
-        return $this->morphMany("App\Models\SearchSlug", "search");
+        return $this->morphMany('App\Models\SearchSlug', "search");
     }
 
     public function defects() {
