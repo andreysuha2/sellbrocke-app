@@ -56,22 +56,28 @@ class OrdersController extends Controller
             $request->toArray()
         ));
         $shippingData = $this->createShipment($customer, $request);
-        $shipping = $order->shipment()->create($shippingData);
-        $shipping->storeLabel($shippingData["label"]);
-        collect($request->devices)->each(function ($deviceData) use ($order) {
-            $orderDevice = new OrderDevice();
-            $device = Device::find($deviceData["id"]);
-            $condition = Condition::find($deviceData["condition"]);
-            $orderDevice->order()->associate($order);
-            $orderDevice->device()->associate($device);
-            $orderDevice->condition()->associate($condition);
-            $orderDevice->save();
-            if(isset($deviceData["defects"])) $orderDevice->defects()->attach($deviceData["defects"]);
-        });
 
-        dispatch(new OrderCreateNotificationJob($order, $customer));
+        if ($shippingData['status'] == 'failed') {
+            $shippingData['message'] = 'Shipping service is unavailable, please try again later';
+            return response()->json($shippingData, 500);
+        } else {
+            $shipping = $order->shipment()->create($shippingData);
+            $shipping->storeLabel($shippingData["label"]);
+            collect($request->devices)->each(function ($deviceData) use ($order) {
+                $orderDevice = new OrderDevice();
+                $device = Device::find($deviceData["id"]);
+                $condition = Condition::find($deviceData["condition"]);
+                $orderDevice->order()->associate($order);
+                $orderDevice->device()->associate($device);
+                $orderDevice->condition()->associate($condition);
+                $orderDevice->save();
+                if(isset($deviceData["defects"])) $orderDevice->defects()->attach($deviceData["defects"]);
+            });
 
-        return new OrderResource($order);
+            dispatch(new OrderCreateNotificationJob($order, $customer));
+
+            return new OrderResource($order);
+        }
     }
 
     public function updateOrderStatus(Request $request, $customer)
@@ -213,18 +219,28 @@ class OrdersController extends Controller
                     ]
                 ]
             ];
+
             $shippingResponse = $shipping->shipment($query);
-            $shippingResponseDetails = $shippingResponse["CompletedShipmentDetail"]["CompletedPackageDetails"][0]["PackageRating"]["PackageRateDetails"][0];
-            $shippingData = [
-                "type" => "FEDEX",
-                "tracking_number" => $shippingResponse["CompletedShipmentDetail"]["MasterTrackingId"]["TrackingNumber"],
-                "weight" => $shippingResponseDetails["BillingWeight"]["Value"],
-                "weight_code" => $shippingResponseDetails["BillingWeight"]["Units"],
-                "total_charges" => $shippingResponseDetails["NetCharge"]["Amount"],
-                "currency_code" => $shippingResponseDetails["NetCharge"]["Currency"],
-                "status" => "created",
-                "label" => $shippingResponse["CompletedShipmentDetail"]["CompletedPackageDetails"][0]["Label"]["Parts"][0]["Image"]
-            ];
+
+            if (isset($shippingResponse['HighestSeverity']) && $shippingResponse['HighestSeverity'] == 'ERROR') {
+                $shippingData = [
+                    "type" => "FEDEX",
+                    "status" => "failed",
+                    "notifications" => $shippingResponse['Notifications']
+                ];
+            } else {
+                $shippingResponseDetails = $shippingResponse["CompletedShipmentDetail"]["CompletedPackageDetails"][0]["PackageRating"]["PackageRateDetails"][0];
+                $shippingData = [
+                    "type" => "FEDEX",
+                    "tracking_number" => $shippingResponse["CompletedShipmentDetail"]["MasterTrackingId"]["TrackingNumber"],
+                    "weight" => $shippingResponseDetails["BillingWeight"]["Value"],
+                    "weight_code" => $shippingResponseDetails["BillingWeight"]["Units"],
+                    "total_charges" => $shippingResponseDetails["NetCharge"]["Amount"],
+                    "currency_code" => $shippingResponseDetails["NetCharge"]["Currency"],
+                    "status" => "created",
+                    "label" => $shippingResponse["CompletedShipmentDetail"]["CompletedPackageDetails"][0]["Label"]["Parts"][0]["Image"]
+                ];
+            }
         } else {
             return abort("404");
         }
