@@ -23,10 +23,14 @@ class OrdersController extends Controller
         $this->itemsPerPage = env('DASHBOARD_ITEMS_PER_PAGE');
     }
 
-    public function getOrders()
+    public function getOrders(Request $request)
     {
-        $orders = Order::orderBy("id", "DESC")->paginate(10);
-        return (new OrdersCollection($orders))->response()->getData(true);
+        if(empty($request->qs)) {
+            $orders = Order::orderBy("id", "DESC")->paginate(10);
+            return (new OrdersCollection($orders))->response()->getData(true);
+        } else {
+            return $this->search($request);
+        }
     }
 
     public function getOrder(Order $order)
@@ -56,10 +60,6 @@ class OrdersController extends Controller
 
     public function search(Request $request)
     {
-        if (empty($request->qs)) {
-            return null;
-        }
-
         $query = trim($request->qs);
         $separatorPos = stripos($query, ' ');
         $orders = [];
