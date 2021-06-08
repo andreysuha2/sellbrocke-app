@@ -15,18 +15,18 @@ class CustomersController extends Controller
         $this->itemsPerPage = env('DASHBOARD_ITEMS_PER_PAGE');
     }
 
-    public function getCustomers()
+    public function getCustomers(Request $request)
     {
-        $customers = Customer::paginate(10);
-        return (new CustomersCollection($customers))->response()->getData(true);
+        if(empty($request->qs)) {
+            $customers = Customer::paginate(10);
+            return (new CustomersCollection($customers))->response()->getData(true);
+        } else {
+            return $this->search($request);
+        }
     }
 
     public function search(Request $request)
     {
-        if (empty($request->qs)) {
-            return null;
-        }
-
         $query = trim($request->qs);
         $separatorPos = stripos($query, ' ');
 
