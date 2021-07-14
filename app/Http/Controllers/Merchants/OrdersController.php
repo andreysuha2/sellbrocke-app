@@ -194,7 +194,7 @@ class OrdersController extends Controller
             $shipping = new FedExService();
             $query = [
                 'version' => [
-                    'major' => 23,
+                    'major' => 26,
                     'intermediate' => 0,
                     'minor' => 0,
                     'service_id' => 'ship',
@@ -213,6 +213,7 @@ class OrdersController extends Controller
                     'phone' => $this->commonSettings["OFFICE_PHONE"],
                 ],
                 'package' => [
+                    'devices' => $request->devices,
                     'weight' => [
                         'value' => $request->shipment["weight"],
                         'units' => 'LB'
