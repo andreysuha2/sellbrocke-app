@@ -179,6 +179,7 @@ class OrdersController extends Controller
                 ]
             ];
             $shippingResponse = $shipping->shipment($query)["ShipmentResponse"];
+
             $shippingLabel = $shippingResponse["ShipmentResults"]["PackageResults"]["ShippingLabel"]["GraphicImage"];
             $shippingData = [
                 "type" => "UPS",
@@ -216,7 +217,7 @@ class OrdersController extends Controller
                     'devices' => $request->devices,
                     'weight' => [
                         'value' => $request->shipment["weight"],
-                        'units' => 'LB'
+                        'units' => $request->shipment["units"]
                     ]
                 ]
             ];
