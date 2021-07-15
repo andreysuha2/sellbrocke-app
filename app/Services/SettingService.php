@@ -54,7 +54,8 @@ class SettingService
     /**
      * Stores parameters into the database
      *
-     * @param Request $request
+     * @param array $data
+     * @param string $group
      *
      * @return \Illuminate\Http\JsonResponse
      */

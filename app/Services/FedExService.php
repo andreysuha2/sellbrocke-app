@@ -92,10 +92,12 @@ class FedExService
             ->setImageType(new SimpleType\ShippingDocumentImageType(SimpleType\ShippingDocumentImageType::_PDF))
             ->setLabelFormatType(new SimpleType\LabelFormatType(SimpleType\LabelFormatType::_COMMON2D));
 
+        $units = $shipmentDetails['package']['weight']['units'] === 'LBS' ? SimpleType\WeightUnits::_LB : SimpleType\WeightUnits::_KG;
+
         $packageLineItem1 = new ComplexType\RequestedPackageLineItem();
         $packageLineItem1
             ->setSequenceNumber(1)
-            ->setItemDescription('Apple McBook Air')
+            ->setItemDescription('Electronics')
 //            ->setDimensions(new ComplexType\Dimensions(array(
 //                'Width' => $shipmentDetails['package']['dimensions']['width'],
 //                'Height' => $shipmentDetails['package']['dimensions']['height'],
@@ -104,7 +106,7 @@ class FedExService
 //            )))
             ->setWeight(new ComplexType\Weight(array(
                 'Value' => $shipmentDetails['package']['weight']['value'],
-                'Units' => SimpleType\WeightUnits::_LB
+                'Units' => $units
             )));
 
         $shippingChargesPayor = new ComplexType\Payor();
