@@ -178,6 +178,7 @@ class OrdersController extends Controller
                     ]
                 ]
             ];
+
             $shippingResponse = $shipping->shipment($query)["ShipmentResponse"];
 
             $shippingLabel = $shippingResponse["ShipmentResults"]["PackageResults"]["ShippingLabel"]["GraphicImage"];

@@ -115,28 +115,33 @@ class UPSService implements UPSInterface
         if ($response->ok()) {
             $response = $response->json();
 
-            if (!isset($response) && !isset($response['trackResponse'])) {
-                return null;
-            }
-
-            if (!isset($response['trackResponse']['shipment'][0]['package'][0]['activity'])) {
-                return null;
-            }
-
-            $events = $response['trackResponse']['shipment'][0]['package'][0]['activity'];
-
             $data = [];
-            foreach ($events as $event) {
-                $data[] = [
-                    'timestamp' => date('Y-m-d', strtotime($event['date'])) . " " . date('g:i a', $event['time']),
-                    'eventType' => $event['status']['type'],
-                    'eventDescription' => $event['status']['description'],
-                    'address' => [
-                        'city' => $event['location']['address']['city'],
-                        'stateOrProvinceCode' => $event['location']['address']['stateProvince'],
-                        'countryCode' => $event['location']['address']['country']
-                    ]
+            $events = [];
+
+            if (isset($response) && isset($response['trackResponse'])) {
+                $data['details'] = [
+                    'message' => $response['trackResponse']['shipment'][0]['warnings'][0]['message'],
+                    'trackingNumber' => $trackingNumber
                 ];
+            }
+
+            if (isset($response['trackResponse']['shipment'][0]['package'][0]['activity'])) {
+                $trackEvents = $response['trackResponse']['shipment'][0]['package'][0]['activity'];
+
+                foreach ($trackEvents as $event) {
+                    $events[] = [
+                        'timestamp' => date('Y-m-d', strtotime($event['date'])) . " " . date('g:i a', $event['time']),
+                        'eventType' => $event['status']['type'],
+                        'eventDescription' => $event['status']['description'],
+                        'address' => [
+                            'city' => $event['location']['address']['city'],
+                            'stateOrProvinceCode' => $event['location']['address']['stateProvince'],
+                            'countryCode' => $event['location']['address']['country']
+                        ]
+                    ];
+                }
+
+                $data['events'] = $events;
             }
 
             return $data;
