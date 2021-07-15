@@ -160,7 +160,7 @@ class FedExService
 
         $version = new TrackServiceComplexType\VersionId();
         $version
-            ->setMajor(16)
+            ->setMajor(19)
             ->setIntermediate(0)
             ->setMinor(0)
             ->setServiceId('trck');
@@ -182,32 +182,38 @@ class FedExService
         $request = new Request();
         $result = $request->getTrackReply($trackRequest);
 
-        if (!isset($result) && !isset($result->CompletedTrackDetails[0])) {
-            return null;
-        }
-
-        if (!isset($result->CompletedTrackDetails[0]->TrackDetails[0]->Events)) {
-            return null;
-        }
-
-
-        $events = $result->CompletedTrackDetails[0]->TrackDetails[0]->Events;
-
         $data = [];
-        foreach ($events as $event) {
-            $data[] = [
-                'timestamp' => (new \DateTime($event->Timestamp))->format('Y-m-d g:i a'),
-                'eventType' => $event->EventType,
-                'eventDescription' => $event->EventDescription,
-                'address' => [
-                    'city' => $event->Address->City,
-                    'stateOrProvinceCode' => $event->Address->StateOrProvinceCode,
-                    'postalCode' => $event->Address->PostalCode,
-                    'countryCode' => $event->Address->CountryCode,
-                    'countryName' => $event->Address->CountryName,
-                    'residential' => $event->Address->Residential
-                ]
+        $events = [];
+
+        if (isset($result) && isset($result->CompletedTrackDetails[0])) {
+            $data['details'] = [
+                'severity' => $result->CompletedTrackDetails[0]->TrackDetails[0]->Notification->Severity,
+                'source' => $result->CompletedTrackDetails[0]->TrackDetails[0]->Notification->Source,
+                'message' => $result->CompletedTrackDetails[0]->TrackDetails[0]->Notification->Message,
+                'trackingNumber' => $result->CompletedTrackDetails[0]->TrackDetails[0]->TrackingNumber
             ];
+        }
+
+        if (isset($result->CompletedTrackDetails[0]->TrackDetails[0]->Events)) {
+            $trackEvents = $result->CompletedTrackDetails[0]->TrackDetails[0]->Events;
+
+            foreach ($trackEvents as $event) {
+                $events[] = [
+                    'timestamp' => (new \DateTime($event->Timestamp))->format('Y-m-d g:i a'),
+                    'eventType' => $event->EventType,
+                    'eventDescription' => $event->EventDescription,
+                    'address' => [
+                        'city' => $event->Address->City,
+                        'stateOrProvinceCode' => $event->Address->StateOrProvinceCode,
+                        'postalCode' => $event->Address->PostalCode,
+                        'countryCode' => $event->Address->CountryCode,
+                        'countryName' => $event->Address->CountryName,
+                        'residential' => $event->Address->Residential
+                    ]
+                ];
+            }
+
+            $data['events'] = $events;
         }
 
         return $data;
