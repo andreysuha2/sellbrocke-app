@@ -31,6 +31,17 @@ class Order extends JsonResource
             "status" => $this->status,
             "devices" => new OrderDevicesCollection($this->devices),
             "customer" => new CustomerResource($this->customer),
+            "order_customer" => [
+                "email" => $this->customer['email'],
+                "first_name" => $this->first_name,
+                "last_name" => $this->last_name,
+                "address" => $this->address,
+                "city" => $this->city,
+                "state" => $this->state,
+                "zip" => $this->zip,
+                "phone" => $this->phone,
+                "paypal_email" => $this->paypal_email
+            ],
             "prices" => $this->prices,
             "payment" => $this->payment,
             "date" => $this->created_at->format('m-d-Y g:i a'),
