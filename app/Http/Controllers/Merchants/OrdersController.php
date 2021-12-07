@@ -130,8 +130,8 @@ class OrdersController extends Controller
                     "Shipment" => [
                         "Description" => $request->shipment["description"] ?? "Electronic devices",
                         "Shipper" => [
-                            "Name" => "{$customer->first_name} {$customer->last_name}",
-                            "AttentionName" => "{$customer->first_name} {$customer->last_name}",
+                            "Name" => "{$request->first_name} {$request->last_name}",
+                            "AttentionName" => "{$request->first_name} {$request->last_name}",
                             "Phone" => [
                                 "Number" => $customer->phone
                             ],
