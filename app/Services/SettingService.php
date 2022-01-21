@@ -16,7 +16,12 @@ class SettingService
     public static function getParameter($paramName)
     {
         if ($paramName) {
-            return Setting::where("key", "=", $paramName)->first()->value;
+            $setting = Setting::where("key", "=", $paramName);
+            if ($setting->first()) {
+                return $setting->first()->value;
+            }
+
+            return null;
         }
 
         return null;

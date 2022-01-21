@@ -119,6 +119,7 @@ Route::group([ "prefix" => "admin" ], function () {
 
 Route::group([ "middleware" => "auth:api-merchants", 'prefix' => 'merchants', 'namespace' => "Merchants"], function () {
     Route::get("/", "MerchantController@index");
+    Route::get("/package-settings", "MerchantController@getPackageSettings");
     Route::group([ "prefix" => "customer" ], function () {
         Route::get("/{merchantCustomerId}", "CustomerController@index");
         Route::post("/{merchantCustomerId}", "CustomerController@update");

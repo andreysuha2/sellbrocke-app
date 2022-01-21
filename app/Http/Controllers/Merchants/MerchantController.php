@@ -11,6 +11,7 @@ use App\Models\Company;
 use App\Models\Device;
 use App\Models\SearchSlug;
 use App\Models\SerialNumber;
+use App\Services\SettingService as Config;
 use Illuminate\Http\Request;
 use App\Http\Resources\Merchants\Merchant as MerchantResource;
 use Illuminate\Support\Facades\Auth;
@@ -228,4 +229,14 @@ class MerchantController extends Controller
         return response()->json($resultSet);
     }
 
+    public function getPackageSettings()
+    {
+        $fedExPackageWeight = Config::getParameter("FEDEX_PACKAGE_WEIGHT");
+        $upsPackageWeight = Config::getParameter("UPS_PACKAGE_WEIGHT");
+
+        return response()->json([
+            'fedExPackageWeight' => !is_null($fedExPackageWeight) ? $fedExPackageWeight : 5,
+            'upsPackageWeight' => !is_null($upsPackageWeight) ? $upsPackageWeight : 5
+        ]);
+    }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Mail\OrderConfirmation;
+use App\Mail\OrderMailCustomer;
 use App\Mail\OrderMail;
 use App\Services\SettingService as Config;
 use Illuminate\Bus\Queueable;
@@ -39,7 +39,10 @@ class OrderCreateNotificationJob implements ShouldQueue
      */
     public function handle()
     {
+        // Send email for the administrator with order's details
         Mail::to($this->adminEmail)->queue(new OrderMail($this->order));
-        Mail::to($this->customer->email)->queue(new OrderConfirmation($this->order));
+
+        // Send email for the customer with order's details
+        Mail::to($this->customer->email)->queue(new OrderMailCustomer($this->order));
     }
 }

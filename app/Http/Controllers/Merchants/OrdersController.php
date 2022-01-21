@@ -52,9 +52,10 @@ class OrdersController extends Controller
     {
         Gate::forUser(Auth::guard("api-merchants")->user())->authorize("create-order", $customer);
         $order = $customer->orders()->create(array_merge(
-            ["status" => "pending", "confirmation_key" => Str::random(32)],
+            ["status" => "open", "confirmation_key" => Str::random(32)],
             $request->toArray()
         ));
+
         $shippingData = $this->createShipment($customer, $request);
 
         if ($shippingData['status'] == 'failed') {
@@ -73,6 +74,10 @@ class OrdersController extends Controller
                 $orderDevice->save();
                 if(isset($deviceData["defects"])) $orderDevice->defects()->attach($deviceData["defects"]);
             });
+
+            $order->log()->create([
+                "message" => "Shipment service: {$order->shipment->type}, tracking number: {$order->shipment->tracking_number}"
+            ]);
 
             dispatch(new OrderCreateNotificationJob($order, $customer));
 

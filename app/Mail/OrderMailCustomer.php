@@ -4,11 +4,10 @@ namespace App\Mail;
 
 use App\Models\Order;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class OrderConfirmation extends Mailable
+class OrderMailCustomer extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -31,7 +30,7 @@ class OrderConfirmation extends Mailable
      */
     public function build()
     {
-        return $this->subject('SellLaptopBack.com - Please confirm your order!')
-            ->view('emails.customer.order-confirm');
+        return $this->subject('SellLaptopBack.com - Your order details')
+            ->view('emails.customer.order-new');
     }
 }

@@ -33,7 +33,7 @@ class Order extends Model
     }
 
     public function shipment() {
-        return $this->hasOne("App\Models\Shipment");
+        return $this->hasOne("App\Models\Shipment", "order_id");
     }
 
     public function getPricesAttribute() {
