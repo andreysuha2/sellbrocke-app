@@ -98,12 +98,6 @@ class FedExService
         $packageLineItem1
             ->setSequenceNumber(1)
             ->setItemDescription('Electronics')
-//            ->setDimensions(new ComplexType\Dimensions(array(
-//                'Width' => $shipmentDetails['package']['dimensions']['width'],
-//                'Height' => $shipmentDetails['package']['dimensions']['height'],
-//                'Length' => $shipmentDetails['package']['dimensions']['length'],
-//                'Units' => SimpleType\LinearUnits::_IN
-//            )))
             ->setWeight(new ComplexType\Weight(array(
                 'Value' => $shipmentDetails['package']['weight']['value'],
                 'Units' => $units
