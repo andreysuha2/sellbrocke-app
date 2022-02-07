@@ -35,14 +35,21 @@ class DevicePage extends JsonResource
     {
         $thumbnailRecord = $this->attachment("thumbnail");
         $thumbnailPath = $thumbnailRecord ? $thumbnailRecord->url : null;
-        if($this->withProductsGrids) {
+
+        if ($this->withProductsGrids) {
             $this->size = new ProductGridResource($this->size);
             $this->carrier = new ProductGridResource($this->carrier);
         }
 
-        if($this->use_products_grids) {
+        if ($this->use_products_grids) {
             $sizes = $this->productsGrids->filter(function ($productGrid) { return $productGrid->type === "size"; });
             $carriers = $this->productsGrids->filter(function ($productGrid) { return $productGrid->type === "carrier"; });
+        }
+
+        if (isset($this->categories[0]->slug) && isset($this->company->slug)) {
+            $mainSlug = $this->categories[0]->slug . "/" . $this->company->slug . "/" . $this->slug;
+        } else {
+            $mainSlug = $this->category_slug . "/" . $this->company_slug . "/" . $this->slug;
         }
 
         return [
@@ -54,8 +61,8 @@ class DevicePage extends JsonResource
             ],
             "thumbnail" => $thumbnailPath,
             "slug" => $this->slug,
-            "company" => $this->company,
-            "mainSlug" => $this->categories[0]->slug . "/" . $this->company->slug . "/" . $this->slug,
+            "company" => !is_null($this->company) ? $this->company : ["name" => $this->company_name],
+            "mainSlug" => $mainSlug,
             "description" => $this->description,
             "productsGrids" => $this->when($this->withProductsGrids, [ "size" => $this->size, "carrier" => $this->carrier ]),
             "productsGridsList" => $this->when($this->use_products_grids, [
@@ -66,7 +73,11 @@ class DevicePage extends JsonResource
     }
 
     private function getDiscounted() {
-        $percent = (100 - $this->company->price_reduction) / 100;
+        if (isset($this->company->price_reduction)) {
+            $percent = (100 - $this->company->price_reduction) / 100;
+        } else {
+            $percent = (100 - $this->price_reduction) / 100;
+        }
         return round($this->base_price * $percent, 2);
     }
 }

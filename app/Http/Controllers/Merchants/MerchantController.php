@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\Merchants\Merchant as MerchantResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\DB;
 
 class MerchantController extends Controller
 {
@@ -36,124 +37,43 @@ class MerchantController extends Controller
 
     public function search(Request $request, $queryString = null)
     {
-
-
         if ($request->has('qs')) {
             $query = trim($request->get('qs'));
-
             $searchParts = explode(' ', $query);
             $searchPartsCount = count($searchParts);
 
             // If query string has two or more words
             if ($searchPartsCount > 1) {
-                $companiesFullList = [];
-                $partsToRemove = [];
-
-                // Loop through all parts of the query string and try to get companies
-                // which are matching to the one of the query string parts
-                for ($i = 0; $i < count($searchParts); $i++) {
-                    $companies = Company::where('name', 'like', "%{$searchParts[$i]}%")->get();
-
-                    if (count($companies) > 0) {
-                        if (empty($companiesFullList)) {
-                            for ($k = 0; $k < count($companies); $k++) {
-                                if (!in_array($companies[$k]->id, $companiesFullList)) {
-                                    $companiesFullList[] = $companies[$k]->id;
-                                }
-                            }
-                        }
-                        $partsToRemove[] = $i;
-                    }
-
-                }
-
-                for ($a = 0; $a < count($partsToRemove); $a++) {
-                    unset($searchParts[$partsToRemove[$a]]);
-                }
-
-                sort($searchParts);
-
-                // If companies exist
-                if (count($companiesFullList) > 0) {
-                    $firstPart = array_shift($searchParts);
-                    if (count($searchParts) === 0) {
-                        // Get devices which are matching to the first part of the rest query string
-                        $devicesRaw = Device::where('name', 'like', "%{$firstPart}%")
-                            ->whereIn('company_id', $companiesFullList)
-                            ->orderBy('id', 'desc')
-                            ->paginate($this->itemsPerPage)
-                            ->setPageName($this->pageParamName);
-                    } else {
-                        // Else get devices which are matching to the first part of the rest query string
-                        $intermediateResults = Device::where('name', 'like', "%{$firstPart}%")
-                            ->whereIn('company_id', $companiesFullList)
-                            ->get();
-
-                        // and search devices which are matching to the other parts of the query string
-                        // among found devices
-                        for ($i = 0; $i < count($searchParts); $i++) {
-                            $ids = [];
-                            for ($j = 0; $j < count($intermediateResults); $j++) {
-                                $ids[] = $intermediateResults[$j]->id;
-                            }
-
-                            if ($i <> count($searchParts) - 1) {
-                                $intermediateResults = Device::where('name', 'like', "%{$searchParts[$i]}%")
-                                    ->whereIn('id', $ids)
-                                    ->get();
-                            } else {
-                                $devicesRaw = Device::where('name', 'like', "%{$searchParts[$i]}%")
-                                    ->whereIn('id', $ids)
-                                    ->orderBy('id', 'desc')
-                                    ->paginate($this->itemsPerPage)
-                                    ->setPageName($this->pageParamName);
-                            }
-                        }
-                    }
-
-                } else {
-                    $firstPart = array_shift($searchParts);
-
-                    $intermediateResults = Device::where('name', 'like', "%{$firstPart}%")
-                        ->get();
-
-                    for ($i = 0; $i < count($searchParts); $i++) {
-                        $ids = [];
-                        for ($j = 0; $j < count($intermediateResults); $j++) {
-                            $ids[] = $intermediateResults[$j]->id;
-                        }
-
-                        if ($i <> count($searchParts) - 1) {
-                            $intermediateResults = Device::where('name', 'like', "%{$searchParts[$i]}%")
-                                ->whereIn('id', $ids)
-                                ->get();
-                        } else {
-                            $devicesRaw = Device::where('name', 'like', "%{$searchParts[$i]}%")
-                                ->whereIn('id', $ids)
-                                ->orderBy('id', 'desc')
-                                ->paginate($this->itemsPerPage)
-                                ->setPageName($this->pageParamName);
-                        }
-                    }
-                }
+                $searchPhrase = implode("%", $searchParts);
+                $devicesRaw = Device::select(
+                    "devices.id",
+                    "devices.name",
+                    "devices.slug",
+                    "companies.name AS company_name",
+                    "companies.slug AS company_slug",
+                    "categories.slug AS category_slug",
+                    "devices.base_price",
+                    "companies.price_reduction",
+                    "devices.use_products_grids",
+                    "devices.created_at"
+                )->where(DB::raw("CONCAT(`companies`.`name`, ' ', `devices`.`name`)"), "LIKE", "%{$searchPhrase}%")
+                    ->join('companies', 'devices.company_id', '=', 'companies.id')
+                    ->join('category_device', 'category_device.device_id', '=', 'devices.id')
+                    ->join('categories', 'category_device.category_id', '=', 'categories.id')
+                    ->orderBy('devices.id', 'desc')
+                    ->paginate($this->itemsPerPage)
+                    ->setPageName($this->pageParamName);
             } else {
                 // Else if query string contains one word, get companies which are matching to this word
                 $companies = Company::where('name', 'like', "%{$query}%")->get();
 
-                // If companies exist
-                if (count($companies) > 0) {
-                    // Get all devices of these companies
-                    $devicesRaw = Device::whereIn('company_id', $companies)
-                        ->orderBy('id', 'desc')
-                        ->paginate($this->itemsPerPage)
-                        ->setPageName($this->pageParamName);
-                } else {
-                    // Else get devices which are matching to the query string
-                    $devicesRaw = Device::where('name', 'like', "%{$query}%")
-                        ->orderBy('id', 'desc')
-                        ->paginate($this->itemsPerPage)
-                        ->setPageName($this->pageParamName);
-                }
+                $devicesRaw = Device::where('name', 'like', "%{$query}%")
+                    ->orWhere(function ($query) use ($companies) {
+                        $query->whereIn('company_id', $companies);
+                    })
+                    ->orderBy('id', 'desc')
+                    ->paginate($this->itemsPerPage)
+                    ->setPageName($this->pageParamName);
             }
 
             $devices = (new DevicesPageCollection($devicesRaw))->response()->getData(true);

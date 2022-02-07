@@ -49,7 +49,12 @@ class UPSService implements UPSInterface
         )->post($url);
         
         if ($response->serverError() || $response->clientError()) {
-            throw new Exception($response);
+            $result = json_decode($response);
+            if (isset($result->response->errors[0])) {
+                throw new Exception($result->response->errors[0]->message);
+            } else {
+                throw new Exception('Something went wrong!');
+            }
         }
 
         if ($response->ok()) {
