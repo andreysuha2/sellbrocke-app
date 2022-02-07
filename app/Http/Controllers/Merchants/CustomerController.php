@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Jobs\CustomerAutoRegistrationNotificationJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class CustomerController extends Controller
 {
